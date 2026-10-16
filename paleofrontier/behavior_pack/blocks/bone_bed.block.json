@@ -1,0 +1,42 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paleo:bone_bed",
+      "menu_category": {
+        "category": "nature",
+        "group": "itemGroup.name.ore"
+      }
+    },
+    "components": {
+      "minecraft:collision_box": true,
+      "minecraft:selection_box": true,
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 2.2
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 6
+      },
+      "minecraft:geometry": "minecraft:geometry.full_block",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "paleo_bone_bed",
+          "render_method": "opaque"
+        }
+      },
+      "minecraft:map_color": {
+        "color": "#c9bda2"
+      },
+      "minecraft:light_dampening": 15,
+      "minecraft:friction": 0.6,
+      "minecraft:breathability": "solid",
+      "minecraft:sound": {
+        "sound": "paleo:bone"
+      },
+      "minecraft:tags": [
+        "minecraft:is_pickaxe_item_destructible"
+      ],
+      "minecraft:loot": "loot_tables/blocks/bone_bed.json"
+    }
+  }
+}

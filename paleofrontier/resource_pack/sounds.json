@@ -1,0 +1,200 @@
+{
+  "block_sounds": {
+    "paleo:sediment": {
+      "pitch": 1.0,
+      "volume": 1.0,
+      "events": {
+        "default": {
+          "sound": "paleo.dig.sediment",
+          "volume": 1.0,
+          "pitch": 1.0
+        },
+        "item_use_on": {
+          "sound": "paleo.dig.sediment",
+          "volume": 0.9,
+          "pitch": 1.0
+        },
+        "break": {
+          "sound": "paleo.dig.sediment",
+          "volume": 1.0,
+          "pitch": 0.95
+        },
+        "place": {
+          "sound": "paleo.dig.sediment",
+          "volume": 1.0,
+          "pitch": 0.9
+        },
+        "hit": {
+          "sound": "paleo.dig.sediment",
+          "volume": 0.35,
+          "pitch": 0.6
+        },
+        "power_on": {
+          "sound": "block.click",
+          "volume": 1.0,
+          "pitch": 0.6
+        },
+        "power_off": {
+          "sound": "block.click",
+          "volume": 1.0,
+          "pitch": 0.5
+        }
+      }
+    },
+    "paleo:bone": {
+      "pitch": 1.0,
+      "volume": 1.0,
+      "events": {
+        "default": {
+          "sound": "paleo.dig.sediment",
+          "volume": 1.0,
+          "pitch": 0.85
+        },
+        "item_use_on": {
+          "sound": "paleo.dig.sediment",
+          "volume": 0.9,
+          "pitch": 0.85
+        },
+        "break": {
+          "sound": "paleo.dig.sediment",
+          "volume": 1.0,
+          "pitch": 0.8
+        },
+        "place": {
+          "sound": "paleo.dig.sediment",
+          "volume": 1.0,
+          "pitch": 0.78
+        },
+        "hit": {
+          "sound": "paleo.dig.sediment",
+          "volume": 0.35,
+          "pitch": 0.55
+        },
+        "power_on": {
+          "sound": "block.click",
+          "volume": 1.0,
+          "pitch": 0.6
+        },
+        "power_off": {
+          "sound": "block.click",
+          "volume": 1.0,
+          "pitch": 0.5
+        }
+      }
+    },
+    "paleo:machine": {
+      "pitch": 1.0,
+      "volume": 1.0,
+      "events": {
+        "default": {
+          "sound": "paleo.bench.open",
+          "volume": 0.9,
+          "pitch": 1.0
+        },
+        "item_use_on": {
+          "sound": "paleo.bench.open",
+          "volume": 0.9,
+          "pitch": 1.0
+        },
+        "break": {
+          "sound": "paleo.lab.deny",
+          "volume": 0.8,
+          "pitch": 0.9
+        },
+        "place": {
+          "sound": "paleo.bench.open",
+          "volume": 1.0,
+          "pitch": 0.85
+        },
+        "hit": {
+          "sound": "paleo.bench.open",
+          "volume": 0.3,
+          "pitch": 0.6
+        },
+        "power_on": {
+          "sound": "block.click",
+          "volume": 1.0,
+          "pitch": 0.7
+        },
+        "power_off": {
+          "sound": "block.click",
+          "volume": 1.0,
+          "pitch": 0.6
+        }
+      }
+    }
+  },
+  "entity_sounds": {
+    "defaults": {},
+    "entities": {
+      "paleo:compsognathus": {
+        "volume": 1.0,
+        "pitch": [
+          0.95,
+          1.1
+        ],
+        "events": {
+          "ambient": "paleo.mob.compy.idle",
+          "hurt": "paleo.mob.compy.hurt",
+          "death": "paleo.mob.compy.death",
+          "step": "paleo.mob.compy.step"
+        }
+      },
+      "paleo:triceratops": {
+        "volume": 1.0,
+        "pitch": [
+          0.92,
+          1.08
+        ],
+        "events": {
+          "ambient": "paleo.mob.trike.idle",
+          "hurt": "paleo.mob.trike.hurt",
+          "death": "paleo.mob.trike.death",
+          "step": "paleo.mob.trike.step",
+          "angry": "paleo.mob.trike.angry"
+        }
+      },
+      "paleo:velociraptor": {
+        "volume": 1.0,
+        "pitch": [
+          0.95,
+          1.1
+        ],
+        "events": {
+          "ambient": "paleo.mob.raptor.idle",
+          "hurt": "paleo.mob.raptor.hurt",
+          "death": "paleo.mob.raptor.death",
+          "step": "paleo.mob.raptor.step",
+          "angry": "paleo.mob.raptor.screech",
+          "attack": "paleo.mob.raptor.screech"
+        }
+      },
+      "paleo:tyrannosaurus": {
+        "volume": 1.0,
+        "pitch": [
+          0.95,
+          1.05
+        ],
+        "events": {
+          "ambient": "paleo.mob.rex.idle",
+          "hurt": "paleo.mob.rex.hurt",
+          "death": "paleo.mob.rex.death",
+          "step": "paleo.mob.rex.step",
+          "roar": "paleo.mob.rex.roar",
+          "prepare_attack": "paleo.mob.rex.roar",
+          "attack_strong": "paleo.mob.rex.bite",
+          "angry": "paleo.mob.rex.roar"
+        }
+      }
+    }
+  },
+  "individual_event_sounds": {
+    "events": {}
+  },
+  "individual_named_sounds": {
+    "events": {}
+  },
+  "interactive_sounds": {
+    "entities": {}
+  }
+}

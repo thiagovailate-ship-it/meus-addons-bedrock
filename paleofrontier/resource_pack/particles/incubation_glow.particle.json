@@ -1,0 +1,69 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "paleo:incubation_glow",
+      "basic_render_parameters": {
+        "material": "particles_add",
+        "texture": "textures/particle/particles"
+      }
+    },
+    "components": {
+      "minecraft:emitter_rate_steady": {
+        "spawn_rate": 12,
+        "max_particles": 40
+      },
+      "minecraft:emitter_lifetime_looping": {
+        "active_time": 2.0
+      },
+      "minecraft:emitter_shape_box": {
+        "offset": [
+          0,
+          0.6,
+          0
+        ],
+        "half_dimensions": [
+          0.4,
+          0.1,
+          0.4
+        ],
+        "direction": "outwards"
+      },
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "0.9 + Math.random(0, 0.6)"
+      },
+      "minecraft:particle_initial_speed": 0.25,
+      "minecraft:particle_motion_dynamic": {
+        "minecraft:particle_drag_coefficient": 0.6,
+        "minecraft:particle_gravity": -0.12
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "0.06 + variable.particle_age * 0.10",
+          "0.06 + variable.particle_age * 0.10"
+        ],
+        "facing_camera_mode": "lookat_xyz",
+        "uv": {
+          "texture_width": 128,
+          "texture_height": 128,
+          "uv": [
+            16,
+            16
+          ],
+          "uv_size": [
+            8,
+            8
+          ]
+        }
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": [
+          0.3,
+          0.9,
+          0.75,
+          "Math.clamp(1.0 - variable.particle_age * 0.9, 0, 1) * 0.8"
+        ]
+      }
+    }
+  }
+}

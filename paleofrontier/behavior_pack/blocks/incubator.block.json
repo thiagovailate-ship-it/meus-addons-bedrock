@@ -1,0 +1,160 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paleo:incubator",
+      "menu_category": {
+        "category": "construction"
+      },
+      "states": {
+        "paleo:stage": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    "components": {
+      "minecraft:collision_box": true,
+      "minecraft:selection_box": true,
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 2.0
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 12
+      },
+      "minecraft:geometry": "geometry.paleo_incubator",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "paleo_incubator_chamber_0",
+          "render_method": "opaque"
+        },
+        "up": {
+          "texture": "paleo_incubator_top",
+          "render_method": "opaque"
+        },
+        "down": {
+          "texture": "paleo_incubator_side",
+          "render_method": "opaque"
+        }
+      },
+      "minecraft:map_color": {
+        "color": "#4d6b6b"
+      },
+      "minecraft:light_dampening": 0,
+      "minecraft:light_emission": 3,
+      "minecraft:friction": 0.6,
+      "minecraft:sound": {
+        "sound": "paleo:machine"
+      },
+      "minecraft:tags": [
+        "minecraft:is_pickaxe_item_destructible"
+      ],
+      "minecraft:loot": "loot_tables/blocks/incubator.json"
+    },
+    "permutations": [
+      {
+        "condition": "q.block_state('paleo:stage') == 0",
+        "components": {
+          "minecraft:light_emission": 3,
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "paleo_incubator_chamber_0",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "paleo_incubator_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "paleo_incubator_side",
+              "render_method": "opaque"
+            }
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('paleo:stage') == 1",
+        "components": {
+          "minecraft:light_emission": 5,
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "paleo_incubator_chamber_1",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "paleo_incubator_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "paleo_incubator_side",
+              "render_method": "opaque"
+            }
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('paleo:stage') == 2",
+        "components": {
+          "minecraft:light_emission": 8,
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "paleo_incubator_chamber_2",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "paleo_incubator_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "paleo_incubator_side",
+              "render_method": "opaque"
+            }
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('paleo:stage') == 3",
+        "components": {
+          "minecraft:light_emission": 11,
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "paleo_incubator_chamber_3",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "paleo_incubator_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "paleo_incubator_side",
+              "render_method": "opaque"
+            }
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('paleo:stage') == 4",
+        "components": {
+          "minecraft:light_emission": 15,
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "paleo_incubator_chamber_4",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "paleo_incubator_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "paleo_incubator_side",
+              "render_method": "opaque"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

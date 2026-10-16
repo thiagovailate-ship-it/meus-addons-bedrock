@@ -1,0 +1,40 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "paleo:fossil_scanner"
+    },
+    "tags": [
+      "paleo_field_gear"
+    ],
+    "pattern": [
+      "IGI",
+      "CRC",
+      "SFS"
+    ],
+    "key": {
+      "I": {
+        "item": "minecraft:iron_ingot"
+      },
+      "G": {
+        "item": "minecraft:glass"
+      },
+      "C": {
+        "item": "minecraft:copper_ingot"
+      },
+      "R": {
+        "item": "minecraft:redstone"
+      },
+      "S": {
+        "item": "paleo:bone_shard"
+      },
+      "F": {
+        "item": "paleo:fossil_chip"
+      }
+    },
+    "result": {
+      "item": "paleo:fossil_scanner",
+      "count": 1
+    }
+  }
+}

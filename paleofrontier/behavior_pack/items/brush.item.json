@@ -1,0 +1,74 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paleo:brush",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:icon": {
+        "textures": {
+          "default": "paleo_brush"
+        }
+      },
+      "minecraft:max_stack_size": 1,
+      "minecraft:tags": {
+        "tags": [
+          "paleo:is_brush",
+          "paleo:is_field_tool",
+          "minecraft:is_tool"
+        ]
+      },
+      "minecraft:durability": {
+        "max_durability": 192,
+        "damage_chance": {
+          "min": 90,
+          "max": 100
+        }
+      },
+      "minecraft:repairable": {
+        "repair_items": [
+          {
+            "items": [
+              "minecraft:feather"
+            ],
+            "repair_amount": "query.max_durability * 0.25"
+          },
+          {
+            "items": [
+              "paleo:brush"
+            ],
+            "repair_amount": "context.other->query.remaining_durability"
+          }
+        ]
+      },
+      "minecraft:enchantable": {
+        "slot": "shears",
+        "value": 10
+      },
+      "minecraft:damage": 1,
+      "minecraft:hand_equipped": {
+        "value": true
+      },
+      "minecraft:digger": {
+        "destroy_speeds": [
+          {
+            "block": "paleo:fossil_deposit",
+            "speed": 2
+          },
+          {
+            "block": "paleo:shale_matrix",
+            "speed": 2
+          },
+          {
+            "block": "paleo:bone_bed",
+            "speed": 2
+          }
+        ],
+        "use_efficiency": true
+      }
+    }
+  }
+}

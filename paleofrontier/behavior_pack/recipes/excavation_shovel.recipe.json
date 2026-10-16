@@ -1,0 +1,31 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "paleo:excavation_shovel"
+    },
+    "tags": [
+      "paleo_field_gear"
+    ],
+    "pattern": [
+      "BIB",
+      " S ",
+      " S "
+    ],
+    "key": {
+      "B": {
+        "item": "paleo:bone_shard"
+      },
+      "I": {
+        "item": "minecraft:iron_ingot"
+      },
+      "S": {
+        "item": "minecraft:stick"
+      }
+    },
+    "result": {
+      "item": "paleo:excavation_shovel",
+      "count": 1
+    }
+  }
+}

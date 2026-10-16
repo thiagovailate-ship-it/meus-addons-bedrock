@@ -1,0 +1,41 @@
+{
+  "format_version": "1.13.0",
+  "minecraft:ore_feature": {
+    "description": {
+      "identifier": "paleo:surface_outcrop_feature"
+    },
+    "count": 6,
+    "replace_rules": [
+      {
+        "places_block": "paleo:fossil_deposit",
+        "may_replace": [
+          "minecraft:sandstone"
+        ]
+      },
+      {
+        "places_block": "paleo:fossil_deposit",
+        "may_replace": [
+          "minecraft:sand"
+        ]
+      },
+      {
+        "places_block": "paleo:fossil_deposit",
+        "may_replace": [
+          "minecraft:red_sandstone"
+        ]
+      },
+      {
+        "places_block": "paleo:fossil_deposit",
+        "may_replace": [
+          "minecraft:stone"
+        ]
+      },
+      {
+        "places_block": "paleo:fossil_deposit",
+        "may_replace": [
+          "minecraft:gravel"
+        ]
+      }
+    ]
+  }
+}

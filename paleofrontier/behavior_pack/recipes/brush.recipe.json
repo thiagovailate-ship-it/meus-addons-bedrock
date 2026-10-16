@@ -1,0 +1,31 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "paleo:brush"
+    },
+    "tags": [
+      "paleo_field_gear"
+    ],
+    "pattern": [
+      "  F",
+      " B ",
+      "S  "
+    ],
+    "key": {
+      "F": {
+        "item": "minecraft:feather"
+      },
+      "B": {
+        "item": "paleo:bone_shard"
+      },
+      "S": {
+        "item": "minecraft:stick"
+      }
+    },
+    "result": {
+      "item": "paleo:brush",
+      "count": 1
+    }
+  }
+}

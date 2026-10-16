@@ -1,0 +1,48 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "paleo:velociraptor",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "wild": "textures/entity/paleo_velociraptor_wild",
+        "bonded": "textures/entity/paleo_velociraptor_bonded",
+        "alert": "textures/entity/paleo_velociraptor_alert",
+        "tagged": "textures/entity/paleo_velociraptor_tagged"
+      },
+      "geometry": {
+        "default": "geometry.paleo_velociraptor",
+        "baby": "geometry.paleo_velociraptor.baby"
+      },
+      "animations": {
+        "walk": "animation.paleo_velociraptor.walk",
+        "idle": "animation.paleo_velociraptor.idle",
+        "look_at_target": "animation.paleo_velociraptor.look_at_target",
+        "attack": "animation.paleo_velociraptor.attack",
+        "eat": "animation.paleo_velociraptor.eat",
+        "rest": "animation.paleo_velociraptor.rest",
+        "roar": "animation.paleo_velociraptor.roar"
+      },
+      "scripts": {
+        "pre_animation": [
+          "variable.paleo_speed = query.modified_move_speed;"
+        ],
+        "scale": "1.0"
+      },
+      "animation_controllers": [
+        {
+          "paleo_move": "controller.animation.paleo_velociraptor"
+        }
+      ],
+      "render_controllers": [
+        "controller.render.paleo_velociraptor"
+      ],
+      "spawn_egg": {
+        "texture": "paleo_spawn_egg_velociraptor",
+        "texture_index": 0
+      }
+    }
+  }
+}

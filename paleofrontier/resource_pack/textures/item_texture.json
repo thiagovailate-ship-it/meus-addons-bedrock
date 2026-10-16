@@ -1,0 +1,111 @@
+{
+  "resource_pack_name": "paleofrontier",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "paleo_fossil_chip": {
+      "textures": [
+        "textures/items/paleo_fossil_chip"
+      ]
+    },
+    "paleo_bone_shard": {
+      "textures": [
+        "textures/items/paleo_bone_shard"
+      ]
+    },
+    "paleo_amber_inclusion": {
+      "textures": [
+        "textures/items/paleo_amber_inclusion"
+      ]
+    },
+    "paleo_nutrient_gel": {
+      "textures": [
+        "textures/items/paleo_nutrient_gel"
+      ]
+    },
+    "paleo_genetic_matrix": {
+      "textures": [
+        "textures/items/paleo_genetic_matrix"
+      ]
+    },
+    "paleo_excavation_shovel": {
+      "textures": [
+        "textures/items/paleo_excavation_shovel"
+      ]
+    },
+    "paleo_brush": {
+      "textures": [
+        "textures/items/paleo_brush"
+      ]
+    },
+    "paleo_fossil_scanner": {
+      "textures": [
+        "textures/items/paleo_fossil_scanner"
+      ]
+    },
+    "paleo_field_case": {
+      "textures": [
+        "textures/items/paleo_field_case"
+      ]
+    },
+    "paleo_specimen_compy": {
+      "textures": [
+        "textures/items/paleo_specimen_compy"
+      ]
+    },
+    "paleo_specimen_trike": {
+      "textures": [
+        "textures/items/paleo_specimen_trike"
+      ]
+    },
+    "paleo_specimen_raptor": {
+      "textures": [
+        "textures/items/paleo_specimen_raptor"
+      ]
+    },
+    "paleo_specimen_rex": {
+      "textures": [
+        "textures/items/paleo_specimen_rex"
+      ]
+    },
+    "paleo_egg_compy": {
+      "textures": [
+        "textures/items/paleo_egg_compy"
+      ]
+    },
+    "paleo_egg_trike": {
+      "textures": [
+        "textures/items/paleo_egg_trike"
+      ]
+    },
+    "paleo_egg_raptor": {
+      "textures": [
+        "textures/items/paleo_egg_raptor"
+      ]
+    },
+    "paleo_egg_rex": {
+      "textures": [
+        "textures/items/paleo_egg_rex"
+      ]
+    },
+    "paleo_spawn_egg_compsognathus": {
+      "textures": [
+        "textures/items/paleo_spawn_egg_compsognathus"
+      ]
+    },
+    "paleo_spawn_egg_triceratops": {
+      "textures": [
+        "textures/items/paleo_spawn_egg_triceratops"
+      ]
+    },
+    "paleo_spawn_egg_velociraptor": {
+      "textures": [
+        "textures/items/paleo_spawn_egg_velociraptor"
+      ]
+    },
+    "paleo_spawn_egg_tyrannosaurus": {
+      "textures": [
+        "textures/items/paleo_spawn_egg_tyrannosaurus"
+      ]
+    }
+  }
+}

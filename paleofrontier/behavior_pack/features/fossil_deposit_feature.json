@@ -1,0 +1,47 @@
+{
+  "format_version": "1.13.0",
+  "minecraft:ore_feature": {
+    "description": {
+      "identifier": "paleo:fossil_deposit_feature"
+    },
+    "count": 9,
+    "replace_rules": [
+      {
+        "places_block": "paleo:fossil_deposit",
+        "may_replace": [
+          "minecraft:stone"
+        ]
+      },
+      {
+        "places_block": "paleo:fossil_deposit",
+        "may_replace": [
+          "minecraft:granite"
+        ]
+      },
+      {
+        "places_block": "paleo:fossil_deposit",
+        "may_replace": [
+          "minecraft:diorite"
+        ]
+      },
+      {
+        "places_block": "paleo:fossil_deposit",
+        "may_replace": [
+          "minecraft:andesite"
+        ]
+      },
+      {
+        "places_block": "paleo:fossil_deposit",
+        "may_replace": [
+          "minecraft:dirt"
+        ]
+      },
+      {
+        "places_block": "paleo:fossil_deposit",
+        "may_replace": [
+          "minecraft:gravel"
+        ]
+      }
+    ]
+  }
+}

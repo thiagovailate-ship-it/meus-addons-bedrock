@@ -1,0 +1,35 @@
+{
+  "pools": [
+    {
+      "rolls": {
+        "min": 0,
+        "max": 2
+      },
+      "entries": [
+        {
+          "type": "item",
+          "name": "paleo:bone_shard",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "rolls": {
+        "min": 0,
+        "max": 2
+      },
+      "conditions": [
+        {
+          "condition": "killed_by_player"
+        }
+      ],
+      "entries": [
+        {
+          "type": "item",
+          "name": "paleo:fossil_chip",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

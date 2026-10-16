@@ -1,0 +1,31 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "paleo:field_case"
+    },
+    "tags": [
+      "paleo_field_gear"
+    ],
+    "pattern": [
+      "LPL",
+      "PCP",
+      "LPL"
+    ],
+    "key": {
+      "L": {
+        "item": "minecraft:leather"
+      },
+      "P": {
+        "item": "minecraft:paper"
+      },
+      "C": {
+        "item": "paleo:fossil_chip"
+      }
+    },
+    "result": {
+      "item": "paleo:field_case",
+      "count": 1
+    }
+  }
+}

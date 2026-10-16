@@ -1,0 +1,107 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:block": {
+    "description": {
+      "identifier": "paleo:research_bench",
+      "menu_category": {
+        "category": "construction"
+      },
+      "traits": {
+        "minecraft:placement_direction": {
+          "enabled_states": [
+            "minecraft:cardinal_direction"
+          ]
+        }
+      }
+    },
+    "components": {
+      "minecraft:collision_box": true,
+      "minecraft:selection_box": true,
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 1.6
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 12
+      },
+      "minecraft:geometry": "geometry.paleo_research_bench",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "paleo_research_bench_side",
+          "render_method": "opaque"
+        },
+        "up": {
+          "texture": "paleo_research_bench_top",
+          "render_method": "opaque"
+        },
+        "south": {
+          "texture": "paleo_research_bench_front",
+          "render_method": "opaque"
+        }
+      },
+      "minecraft:map_color": {
+        "color": "#6b5a44"
+      },
+      "minecraft:light_dampening": 0,
+      "minecraft:light_emission": 4,
+      "minecraft:friction": 0.6,
+      "minecraft:sound": {
+        "sound": "paleo:machine"
+      },
+      "minecraft:tags": [
+        "minecraft:is_pickaxe_item_destructible",
+        "minecraft:is_axe_item_destructible"
+      ],
+      "minecraft:loot": "loot_tables/blocks/research_bench.json"
+    },
+    "permutations": [
+      {
+        "condition": "q.block_state('minecraft:cardinal_direction') == 'north'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              180,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('minecraft:cardinal_direction') == 'south'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('minecraft:cardinal_direction') == 'east'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              90,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('minecraft:cardinal_direction') == 'west'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              270,
+              0
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

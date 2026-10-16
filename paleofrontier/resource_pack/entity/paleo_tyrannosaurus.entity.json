@@ -1,0 +1,48 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "paleo:tyrannosaurus",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "wild": "textures/entity/paleo_tyrannosaurus_wild",
+        "bonded": "textures/entity/paleo_tyrannosaurus_bonded",
+        "alert": "textures/entity/paleo_tyrannosaurus_alert",
+        "tagged": "textures/entity/paleo_tyrannosaurus_tagged"
+      },
+      "geometry": {
+        "default": "geometry.paleo_tyrannosaurus",
+        "baby": "geometry.paleo_tyrannosaurus.baby"
+      },
+      "animations": {
+        "walk": "animation.paleo_tyrannosaurus.walk",
+        "idle": "animation.paleo_tyrannosaurus.idle",
+        "look_at_target": "animation.paleo_tyrannosaurus.look_at_target",
+        "attack": "animation.paleo_tyrannosaurus.attack",
+        "eat": "animation.paleo_tyrannosaurus.eat",
+        "rest": "animation.paleo_tyrannosaurus.rest",
+        "roar": "animation.paleo_tyrannosaurus.roar"
+      },
+      "scripts": {
+        "pre_animation": [
+          "variable.paleo_speed = query.modified_move_speed;"
+        ],
+        "scale": "1.0"
+      },
+      "animation_controllers": [
+        {
+          "paleo_move": "controller.animation.paleo_tyrannosaurus"
+        }
+      ],
+      "render_controllers": [
+        "controller.render.paleo_tyrannosaurus"
+      ],
+      "spawn_egg": {
+        "texture": "paleo_spawn_egg_tyrannosaurus",
+        "texture_index": 0
+      }
+    }
+  }
+}
