@@ -23,17 +23,29 @@ DIST = os.path.join(ROOT, "dist")
 IGNORED_DIRS = {"node_modules", ".schemas", "__pycache__", ".git"}
 IGNORED_FILES = {".DS_Store", "Thumbs.db"}
 
+# O zip grava o mtime de cada entrada, entao o SHA-256 do .mcaddon mudava
+# conforme a hora em que os arquivos tinham sido gerados - mesmo com o conteudo
+# identico.  Com data fixa (e percurso ordenado) o artefato passa a ser
+# reproduzivel byte a byte, e o hash publicado no release pode ser conferido por
+# qualquer pessoa que rebuildar o pacote.  O cliente Bedrock ignora o mtime.
+FIXED_DATE_TIME = (1980, 1, 1, 0, 0, 0)
+
 
 def add_pack(zf, pack_dir, arc_prefix):
     count = 0
     for dirpath, dirnames, filenames in os.walk(pack_dir):
-        dirnames[:] = [d for d in dirnames if d not in IGNORED_DIRS]
+        # ordenar tambem os diretorios: os.walk nao garante ordem entre eles
+        dirnames[:] = sorted(d for d in dirnames if d not in IGNORED_DIRS)
         for name in sorted(filenames):
             if name in IGNORED_FILES:
                 continue
             full = os.path.join(dirpath, name)
             rel = os.path.relpath(full, pack_dir).replace(os.sep, "/")
-            zf.write(full, f"{arc_prefix}/{rel}")
+            info = zipfile.ZipInfo(f"{arc_prefix}/{rel}", date_time=FIXED_DATE_TIME)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            with open(full, "rb") as handle:
+                zf.writestr(info, handle.read())
             count += 1
     return count
 

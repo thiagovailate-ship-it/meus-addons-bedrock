@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import os
 import sys
+import zlib
 
 import numpy as np
 
@@ -23,7 +24,14 @@ SR = 22050
 
 
 def seed_rng(name):
-    np.random.seed(abs(hash(name)) % (2 ** 31))
+    """Semeia o RNG de forma ESTAVEL entre processos.
+
+    `hash()` de str e randomizado por processo no Python 3 (PYTHONHASHSEED),
+    entao `abs(hash(name))` fazia os 45 OGGs mudarem de bytes a cada execucao:
+    o build nao era reproduzivel e cada run sujava 45 arquivos binarios no git
+    sem nenhuma mudanca de conteudo.  CRC32 do nome depende apenas do nome.
+    """
+    np.random.seed(zlib.crc32(name.encode("utf-8")) % (2 ** 31))
 
 
 def t(duration):
@@ -134,11 +142,66 @@ def normalise(sig, peak=0.85):
     return sig * (peak / m)
 
 
+def ogg_crc32(data):
+    """CRC-32 do container Ogg: poly 0x04c11db7, sem reflexao, sem xor final.
+
+    Validado reproduzindo byte a byte os CRCs que o proprio libsndfile grava
+    (ver tools/run_all.sh: a normalizacao abaixo confere cada pagina).
+    """
+    crc = 0
+    for byte in data:
+        crc ^= byte << 24
+        for _ in range(8):
+            crc = ((crc << 1) ^ 0x04C11DB7) & 0xFFFFFFFF if crc & 0x80000000 else (crc << 1) & 0xFFFFFFFF
+    return crc
+
+
+def normalize_ogg_serial(path, serial):
+    """Fixa o bitstream serial number do Ogg e recalcula os CRCs de pagina.
+
+    O libsndfile sorteia um serial por arquivo, entao mesmo com o DSP totalmente
+    deterministico os 45 OGGs mudavam de bytes a cada geracao: o build nao era
+    reproduzivel e cada run sujava 45 binarios no git sem mudar nenhum audio.
+    O serial vive no cabecalho de cada pagina (offset 14, 4 bytes little-endian)
+    e o CRC da pagina (offset 22) o cobre, dai o recalculo.
+
+    Retorna o numero de paginas reescritas.
+    """
+    with open(path, "rb") as handle:
+        buf = bytearray(handle.read())
+    pages = 0
+    off = 0
+    while off < len(buf):
+        if bytes(buf[off:off + 4]) != b"OggS":
+            raise ValueError(f"{path}: assinatura OggS ausente no offset {off}")
+        nseg = buf[off + 26]
+        size = 27 + nseg + sum(buf[off + 27:off + 27 + nseg])
+        buf[off + 14:off + 18] = (serial & 0xFFFFFFFF).to_bytes(4, "little")
+        page = buf[off:off + size]
+        page[22:26] = b"\x00\x00\x00\x00"
+        buf[off + 22:off + 26] = ogg_crc32(bytes(page)).to_bytes(4, "little")
+        pages += 1
+        off += size
+    with open(path, "wb") as handle:
+        handle.write(bytes(buf))
+    return pages
+
+
 def write_ogg(sig, name, duration=None):
     sig = normalise(sig)
     path = os.path.join(OUT, name + ".ogg")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     sf.write(path, sig.astype(np.float32), SR, format="OGG", subtype="VORBIS")
+
+    # Auto-verificacao: o audio decodificado tem que ser identico antes e depois
+    # de reescrever o serial.  Se um dia a normalizacao corromper um arquivo, a
+    # geracao falha aqui em vez de publicar um som quebrado.
+    before, sr_before = sf.read(path, dtype="float32", always_2d=True)
+    serial = zlib.crc32(name.encode("utf-8")) or 1
+    normalize_ogg_serial(path, serial)
+    after, sr_after = sf.read(path, dtype="float32", always_2d=True)
+    if sr_before != sr_after or before.shape != after.shape or not np.array_equal(before, after):
+        raise SystemExit(f"{name}.ogg: a normalizacao do serial Ogg alterou o audio")
     return path
 
 

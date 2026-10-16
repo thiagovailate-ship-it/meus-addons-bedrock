@@ -92,8 +92,8 @@
           "probability_per_strength": 0.5,
           "avoid_mob_sound": "warn",
           "sound_interval": {
-            "range_min": 6.0,
-            "range_max": 14.0
+            "min": 6.0,
+            "max": 14.0
           },
           "entity_types": [
             {
@@ -127,6 +127,9 @@
           "broadcast_range": 14,
           "broadcast_anger_on_attack": true,
           "broadcast_anger_on_being_attacked": true,
+          "broadcast_targets": [
+            "triceratops"
+          ],
           "angry_sound": "angry",
           "sound_interval": {
             "range_min": 4.0,
@@ -139,7 +142,6 @@
         },
         "minecraft:behavior.hurt_by_target": {
           "priority": 1,
-          "alert_same_type": true,
           "entity_types": [
             {
               "filters": {

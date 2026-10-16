@@ -13,7 +13,7 @@ import * as lab from "./lab.js";
 import { args } from "../core/text.js";
 
 function foundCount(player, key) {
-  return store.journalFor(player).found[key] || 0;
+  return store.journalBucket(player, "found")[key] || 0;
 }
 
 export function specimenFound(player, key) {
@@ -21,15 +21,15 @@ export function specimenFound(player, key) {
 }
 
 export function hatchedCount(player, key) {
-  return store.journalFor(player).hatched[key] || 0;
+  return store.journalBucket(player, "hatched")[key] || 0;
 }
 
 export function studiedCount(player, key) {
-  return store.journalFor(player).studied[key] || 0;
+  return store.journalBucket(player, "studied")[key] || 0;
 }
 
 export function bondedCount(player, key) {
-  return store.journalFor(player).bonded[key] || 0;
+  return store.journalBucket(player, "bonded")[key] || 0;
 }
 
 /** First three unfinished milestones, as translatable objective lines. */

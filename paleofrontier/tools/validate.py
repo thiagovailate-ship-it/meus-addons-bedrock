@@ -602,8 +602,26 @@ def check_bedrock_vocabulary():
       [Animation] animation_controllers | child not valid here    (4 client ent.)
       [Actor]  minecraft:pushable: not present in the Schema      (4 entidades)
 
+    O SEGUNDO log real (mesmo cliente, apos as correcoes acima) acrescentou:
+
+      [Blocks] minecraft:breathability: member is deprecated      (3 blocos)
+      [Json]   Unknown block during Deferred BlockDescriptor
+               resolution: paleo:fossil_deposit                   (3 blocos)
+      [Actor]  hurt_by_target.alert_same_type: not present in
+               the Schema                                         (2 entidades)
+      [Actor]  avoid_mob_type.sound_interval.range_min/range_max:
+               not present in the Schema                          (2 entidades)
+      [Actor]  nearest_attackable_target.entity_types[1] ->
+               must_see_forget_duration: invalid numeric value     (2 entidades)
+      [Script] journal_ui.open: cannot read property 'rex'
+               of undefined                                       (bucket 'bonded')
+
+    Atencao: o cliente ABORTA no primeiro erro de parse por entidade, entao o
+    silencio dele sobre um arquivo que ja falhou NAO prova validade.  As
+    correcoes cobrem todas as ocorrencias, nao apenas as reportadas.
+
     Os vocabularios vem de tools/bedrock_names.py, derivados dos samples
-    vanilla 1.26.50.4 e da documentacao oficial.
+    vanilla 1.26.50.4, da documentacao oficial e dos logs reais do cliente.
     """
     # --- menu_category de blocos e itens ------------------------------------
     for kind, root, key in (
@@ -630,6 +648,26 @@ def check_bedrock_vocabulary():
                 elif group not in bn.ITEM_GROUPS:
                     fail(f"{rel(path)}: menu_category.group '{group}' nao e um grupo vanilla conhecido")
                 ok()
+
+    # --- componentes de BLOCO que o cliente marca como deprecated ------------
+    # Segundo log real (Bedrock 1.26.52, iOS):
+    #   [Blocks][error]-block_definitions | blocks/shale_matrix.block.json |
+    #     -> components -> minecraft:breathability: member
+    #        "minecraft:breathability" is deprecated
+    #   [Json][error]-Unknown block during Deferred BlockDescriptor resolution:
+    #        paleo:shale_matrix
+    # O bloco nao e registrado e some do mundo.  Nenhum dos blocos vanilla dos
+    # samples 1.26.50.4 usa esse componente; a documentacao (Blocks.html) diz
+    # que o default ja e "solid", entao declara-lo e redundante E fatal.
+    for path in walk(os.path.join(BP, "blocks"), [".json"]):
+        doc = load(path)
+        comps = (doc.get("minecraft:block") or {}).get("components") or {}
+        for comp in sorted(set(comps) & bn.DEPRECATED_BLOCK_COMPONENTS):
+            fail(f"{rel(path)}: '{comp}' e deprecated no cliente 1.26.52 e o bloco deixa de "
+                 f"ser registrado ('Unknown block during Deferred BlockDescriptor "
+                 f"resolution'); nenhum bloco vanilla o usa e o default ja e \"solid\", "
+                 f"entao basta remove-lo")
+        ok()
 
     # --- forma dos componentes de item (objeto vs escalar) -------------------
     for path in walk(os.path.join(BP, "items"), [".json"]):

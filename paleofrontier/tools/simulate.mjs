@@ -15,6 +15,10 @@
  *   8  progress survives a simulated world reload
  *   9  double taps open one form; players never share inventory state
  *  10  journal UI and the developer dump hook work
+ *  11  mock fidelity guards (negative assertions: the mock must still reject the
+ *      shapes the real client rejected)
+ *  12  a BRAND NEW player can open every journal screen - regression for the
+ *      second real client log ("cannot read property 'rex' of undefined")
  *
  * Usage: node tools/simulate.mjs
  */
@@ -344,6 +348,69 @@ check(
     }
   })(),
 );
+
+// ---------------------------------------------------------------------------
+// [12] Regressao do SEGUNDO log real do cliente (Bedrock 1.26.52, iOS):
+//   [Scripting][error]-[paleo:error] journal_ui.open: cannot read property
+//   'rex' of undefined
+// Causa: a fabrica do journal declarava os buckets found/studied/hatched/raised,
+// mas o codigo lia `.bonded` - e `raised` nunca foi usado por ninguem.  Como
+// `bumpJournal` se autocorrigia ao ESCREVER, o bug so aparecia num jogador que
+// nunca tinha criado um vinculo: exatamente quem abre o diario pela primeira
+// vez.  As secoes anteriores usam a Alice (que ja jogou) e navegam apenas ate
+// "objectives", caminho que nao le `bonded`; por isso o harness passou verde.
+// Aqui um jogador novo visita as duas telas que leem o bucket.
+// ---------------------------------------------------------------------------
+console.log("\n[12] journal de jogador novo (regressao do 2o log real)");
+const carol = world.addPlayer("Carol", { x: 8, y: 60, z: 8 });
+fireJoin(carol);
+await flush();
+
+const errorLines = [];
+const originalError = console.error;
+console.error = (line) => {
+  errorLines.push(String(line));
+};
+
+// Diario -> "creatures" (indice 2): chama bondedCount para cada especie.
+forms.shownForms.length = 0;
+forms.setResponder((form) => {
+  if (translateOf(form.title) === "paleo.ui.journal.title") return 2;
+  return -1;
+});
+carol.hold("paleo:field_case");
+advanceTicks(10);
+useItem(carol, "paleo:field_case");
+await flush();
+check("jogador novo abre a tela de criaturas do diario",
+  forms.shownForms.some((f) => translateOf(f.title) === "paleo.ui.journal.creatures"));
+
+// Diario -> "species" (0) -> dossier de cada especie: dossierLines tambem le
+// bondedCount.  speciesMenu e dossier usam o MESMO titulo, entao a navegacao
+// conta as aparicoes: a primeira e o menu de especies, a segunda e o dossier.
+let speciesTitleCount = 0;
+for (const speciesIndex of [0, 1, 2, 3]) {
+  let appearances = 0;
+  forms.setResponder((form) => {
+    const title = translateOf(form.title);
+    if (title === "paleo.ui.journal.title") return 0;
+    if (title === "paleo.ui.journal.species") {
+      appearances += 1;
+      speciesTitleCount += 1;
+      return appearances === 1 ? speciesIndex : -1;
+    }
+    return -1;
+  });
+  advanceTicks(10);
+  useItem(carol, "paleo:field_case");
+  await flush();
+}
+check("jogador novo abre o dossier das 4 especies", speciesTitleCount === 8);
+
+console.error = originalError;
+const journalErrors = errorLines.filter((line) => line.includes("journal_ui"));
+check("diario de jogador novo nao emite erro de script", journalErrors.length === 0);
+for (const line of journalErrors) originalError(`    capturado: ${line}`);
 
 console.log(`\n[simulate] ${passed} assertions passed, ${failures.length} failed`);
 if (failures.length) {

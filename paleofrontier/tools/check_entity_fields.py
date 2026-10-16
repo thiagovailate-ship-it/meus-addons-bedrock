@@ -75,6 +75,62 @@ def kind_ok(expected, value):
     return True, ""
 
 
+def walk_component_body(comp, node, path, out):
+    """Regras que so aparecem descendo no corpo do componente.
+
+    Tres classes que o checker original nao cobria e que o segundo log real do
+    cliente provou serem fatais:
+
+      * membros dentro dos itens de `entity_types` (o cliente abortou a entidade
+        por `entity_types[1].must_see_forget_duration`);
+      * nomes de membros de objetos aninhados (`avoid_mob_type.sound_interval`
+        usa {min,max} enquanto `angry.sound_interval` usa {range_min,range_max});
+      * campos folha que viraram enum de string (`damage_sensor.deals_damage`,
+        que estava como `{"value": false}` e nem chegou a ser reportado porque a
+        entidade ja tinha falhado antes).
+    """
+    if isinstance(node, dict):
+        for field, allowed in bn.LEAF_ENUM_FIELDS.items():
+            if field in node:
+                value = node[field]
+                if not (isinstance(value, str) and value in allowed):
+                    out.append(
+                        f"'{comp}{('.' + path) if path else ''}.{field}' precisa ser uma destas "
+                        f"strings {sorted(allowed)} (encontrado {json.dumps(value)}): o campo "
+                        f"deixou de ser boolean/objeto em fv 1.21.40"
+                    )
+        if "entity_types" in node:
+            allowed = bn.ENTITY_TYPES_ITEM_FIELDS.get(comp)
+            if allowed is not None:
+                entries = node["entity_types"]
+                items = entries if isinstance(entries, list) else [entries]
+                for index, item in enumerate(items):
+                    if not isinstance(item, dict):
+                        continue
+                    for member in item:
+                        if member not in allowed:
+                            suffix = "" if isinstance(entries, list) else " (objeto)"
+                            out.append(
+                                f"'{comp}.entity_types[{index}]{suffix}.{member}' nao e um membro "
+                                f"valido; o vanilla usa apenas {sorted(allowed)} nesse componente"
+                            )
+        for key, value in node.items():
+            child = f"{path}.{key}" if path else key
+            if isinstance(value, dict):
+                members = bn.NESTED_OBJECT_FIELD_MEMBERS.get((comp, key))
+                if members is not None:
+                    extra = set(value) - set(members)
+                    if extra:
+                        out.append(
+                            f"'{comp}.{child}' tem membros {sorted(extra)} que o vanilla nao usa "
+                            f"nesse componente; os membros validos aqui sao {sorted(members)}"
+                        )
+            walk_component_body(comp, value, child, out)
+    elif isinstance(node, list):
+        for index, item in enumerate(node):
+            walk_component_body(comp, item, f"{path}[{index}]", out)
+
+
 def component_sections(doc):
     entity = doc.get("minecraft:entity") or {}
     comps = entity.get("components")
@@ -85,10 +141,8 @@ def component_sections(doc):
             yield f"component_groups.{group}", body
 
 
-def check_file(path, forms):
+def check_doc(doc, rel, forms):
     fails, warns = [], []
-    doc = json.load(open(path, encoding="utf-8"))
-    rel = os.path.relpath(path, ROOT)
     fv = doc.get("format_version", "0.0.0")
     ident = ((doc.get("minecraft:entity") or {}).get("description") or {}).get("identifier", "?")
 
@@ -115,6 +169,26 @@ def check_file(path, forms):
                         f'{{"min": ..., "max": ...}} desde {gating} (format_version: {fv}), '
                         f"encontrado {json.dumps(body[field])}"
                     )
+
+            # ---- FAIL: campos que o cliente rejeitou explicitamente --------
+            # Os forms oficiais ainda listam `alert_same_type`; o cliente 1.26.52
+            # responde "this member was found in the input, but is not present in
+            # the Schema" e 0 das 128 entidades vanilla o usam.  Log real vence
+            # documentacao.
+            for field in sorted(bn.CLIENT_REJECTED_ENTITY_FIELDS.get(comp) or ()):
+                if field in body:
+                    fails.append(
+                        f"{rel} {ident} {label}: '{comp}.{field}' foi rejeitado pelo cliente "
+                        f"1.26.52 ('not present in the Schema') e nao aparece em nenhuma das "
+                        f"128 entidades vanilla; use 'minecraft:angry' com "
+                        f"broadcast_anger_on_being_attacked + broadcast_targets (padrao piglin)"
+                    )
+
+            # ---- FAIL: regras de profundidade (entity_types, objetos, enums)
+            deep = []
+            walk_component_body(comp, body, "", deep)
+            for msg in deep:
+                fails.append(f"{rel} {ident} {label}: {msg}")
 
             # ---- AVISO: campos renomeados que o cliente ainda migra -------
             for old, new in (bn.RENAMED_COMPONENT_FIELDS.get(comp) or {}).items():
@@ -144,6 +218,11 @@ def check_file(path, forms):
                 if not ok:
                     warns.append(f"{rel} {ident} {label}: '{comp}.{field}' {why}")
     return fails, warns
+
+
+def check_file(path, forms):
+    doc = json.load(open(path, encoding="utf-8"))
+    return check_doc(doc, os.path.relpath(path, ROOT), forms)
 
 
 def main(argv=None):

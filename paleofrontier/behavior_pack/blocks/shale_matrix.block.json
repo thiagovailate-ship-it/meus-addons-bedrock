@@ -29,7 +29,6 @@
       },
       "minecraft:light_dampening": 15,
       "minecraft:friction": 0.6,
-      "minecraft:breathability": "solid",
       "minecraft:sound": {
         "sound": "paleo:sediment"
       },

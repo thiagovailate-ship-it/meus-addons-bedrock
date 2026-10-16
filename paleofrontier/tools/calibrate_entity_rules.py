@@ -24,6 +24,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import bedrock_names as bn  # noqa: E402
+import check_entity_fields as cef  # noqa: E402
 
 FORMS = os.path.join(HERE, ".forms", "entity_fields.json")
 DEFAULT_SAMPLES = "/tmp/refs/bedrock-samples"
@@ -75,6 +76,14 @@ def main(argv):
         parsed += 1
         name = os.path.basename(path)
         fv = doc.get("format_version", "0.0.0")
+        # Regra E (FAIL): o checker REAL inteiro, aplicado ao vanilla.  E a
+        # calibracao mais forte disponivel - testa as regras de producao em vez
+        # de uma reimplementacao delas, e cobre as regras de profundidade
+        # (entity_types, membros de objetos aninhados, enums folha) que o segundo
+        # log real do cliente provou serem fatais.
+        real_fails, _ = cef.check_doc(doc, name, forms)
+        for msg in real_fails:
+            violations["E_checker_real_no_vanilla"].append(msg)
         for _label, comps in component_sections(doc):
             for comp, body in comps.items():
                 # Regra D (FAIL, gated): componente que o cliente nao parseia mais
@@ -110,13 +119,15 @@ def main(argv):
     print(f"entidades vanilla lidas: {parsed}/{scanned} em {samples}")
     print()
     severity = {
+        "E_checker_real_no_vanilla": "FAIL",
         "C_float_range_nao_objeto": "FAIL",
         "D_componente_removido": "FAIL",
         "A_campo_nao_declarado": "aviso",
         "B_object_recebeu_escalar": "aviso",
     }
     exit_code = 0
-    for rule in ["C_float_range_nao_objeto", "D_componente_removido",
+    for rule in ["E_checker_real_no_vanilla", "C_float_range_nao_objeto",
+                 "D_componente_removido",
                  "A_campo_nao_declarado", "B_object_recebeu_escalar"]:
         items = violations.get(rule, [])
         sev = severity[rule]

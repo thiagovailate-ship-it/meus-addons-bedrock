@@ -62,7 +62,12 @@ def deposit_block(b):
                 "minecraft:map_color": {"color": b["map_color"]},
                 "minecraft:light_dampening": 15,
                 "minecraft:friction": 0.6,
-                "minecraft:breathability": "solid",
+                # NAO emitir minecraft:breathability: o cliente 1.26.52 o reporta
+                # como deprecated e o bloco deixa de ser registrado
+                # ("Unknown block during Deferred BlockDescriptor resolution").
+                # A documentacao oficial (Blocks.html) diz que o default ja e
+                # "solid" quando o componente e omitido, entao remove-lo nao muda
+                # nada no jogo.  Nenhum bloco vanilla dos samples 1.26.50.4 o usa.
                 "minecraft:sound": {"sound": cm.BLOCK_SOUND_ASSIGNMENT[b["id"]]},
                 "minecraft:tags": cm.BLOCK_ITEM_TAGS[b["id"]],
                 "minecraft:loot": b["loot"],

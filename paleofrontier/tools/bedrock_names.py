@@ -245,3 +245,109 @@ MENU_CATEGORIES = frozenset({"construction", "equipment", "items", "nature", "no
 OBJECT_ONLY_ITEM_COMPONENTS = {
     "minecraft:fire_resistant": ("value",),
 }
+
+
+# ---------------------------------------------------------------------------
+# Regras derivadas do SEGUNDO log real do cliente (Bedrock 1.26.52, iOS) e do
+# censo das 128 entidades vanilla dos bedrock-samples 1.26.50.4.
+#
+# Hierarquia de evidencia usada aqui (a mais forte primeiro):
+#   1. log real do cliente       -> vira FAIL
+#   2. censo vanilla             -> vira FAIL quando ha referencia
+#   3. forms/documentacao        -> so AVISO (os forms listam `alert_same_type`
+#                                   e o cliente 1.26.52 o rejeita: estao
+#                                   desatualizados em relacao ao parser)
+#
+# Detalhe que muda tudo: o cliente ABORTA no primeiro erro de parse por
+# entidade.  Uma entidade que falha esconde os erros seguintes, entao silencio
+# do cliente sobre um arquivo que ja falhou NAO e evidencia de validade.
+# ---------------------------------------------------------------------------
+
+# Campos que o cliente 1.26.52 rejeitou explicitamente com
+# "this member was found in the input, but is not present in the Schema".
+# `alert_same_type` consta nos forms oficiais como boolean - os forms estao
+# errados/desatualizados.  0 das 128 entidades vanilla o usam.  O mecanismo
+# equivalente e moderno e `minecraft:angry.broadcast_anger_on_being_attacked`
+# + `broadcast_targets` (padrao piglin.json fv 1.26.20).
+CLIENT_REJECTED_ENTITY_FIELDS = {
+    "minecraft:behavior.hurt_by_target": frozenset({"alert_same_type"}),
+}
+
+# Membros permitidos dentro dos itens de `entity_types` (lista OU objeto), por
+# componente.  Derivado do censo vanilla: o que nenhuma entidade vanilla usa
+# dentro de entity_types[], o cliente rejeita - foi o que aconteceu com
+# `must_see_forget_duration`, que so e valido no nivel do componente
+# (8 usos vanilla la, 0 dentro de entity_types).
+ENTITY_TYPES_ITEM_FIELDS = {
+    "minecraft:behavior.avoid_mob_type": frozenset(
+        {"filters", "max_dist", "sprint_speed_multiplier", "walk_speed_multiplier",
+         "check_if_outnumbered"}),
+    "minecraft:behavior.defend_village_target": frozenset({"filters"}),
+    "minecraft:behavior.drop_item_for": frozenset({"filters", "max_dist"}),
+    "minecraft:behavior.follow_caravan": frozenset({"filters"}),
+    "minecraft:behavior.hurt_by_target": frozenset({"filters", "max_dist"}),
+    "minecraft:behavior.nearest_attackable_target": frozenset(
+        {"filters", "max_dist", "must_see", "reevaluate_description"}),
+    "minecraft:behavior.nearest_prioritized_attackable_target": frozenset(
+        {"filters", "max_dist", "priority", "cooldown"}),
+    "minecraft:behavior.share_items": frozenset({"filters"}),
+    "minecraft:behavior.sneeze": frozenset({"filters", "max_dist"}),
+    "minecraft:behavior.swim_with_entity": frozenset({"filters"}),
+    "minecraft:behavior.target_when_pushed": frozenset({"filters"}),
+}
+
+# Membros permitidos em campos cujo valor e um objeto aninhado, por
+# (componente, campo).  Semantica de SUBCONJUNTO DA UNIAO do que o vanilla usa:
+# igualdade exata daria falso positivo (ex.: `despawn_from_distance` e `{}` em
+# 67 entidades vanilla e `{min_distance,max_distance}` em 6).
+#
+# A forma de `sound_interval` VARIA POR COMPONENTE e isso nao e intuitivo:
+#   avoid_mob_type -> {"min","max"}            (hoglin/piglin, fv 1.26.20)
+#   panic          -> {"range_min","range_max"}
+#   angry          -> {"range_min","range_max"}  (4 usos vanilla)
+# O cliente 1.26.52 reclamou exatamente de avoid_mob_type e ficou em silencio
+# sobre panic/angry, confirmando o censo.  Um rename global teria quebrado os
+# outros dois.
+#
+# Campos de gramatica de filtro (filters, damage_filters, knockback_filters,
+# broadcast_filters) ficam DE FORA de proposito: a gramatica e recursiva e
+# aberta, entao o censo vanilla nao a cobre e uma regra estrita geraria falso
+# positivo.
+NESTED_OBJECT_FIELD_MEMBERS = {
+    ("minecraft:ageable", "grow_up"): frozenset({"event", "target"}),
+    ("minecraft:angry", "calm_event"): frozenset({"event", "target"}),
+    ("minecraft:angry", "sound_interval"): frozenset({"range_min", "range_max"}),
+    ("minecraft:attack_cooldown", "attack_cooldown_complete_event"): frozenset({"event", "target"}),
+    ("minecraft:behavior.avoid_mob_type", "sound_interval"): frozenset({"min", "max"}),
+    ("minecraft:behavior.beg", "look_time"): frozenset({"min", "max"}),
+    ("minecraft:behavior.eat_block", "on_eat"): frozenset({"event", "target"}),
+    ("minecraft:behavior.knockback_roar", "on_roar_end"): frozenset({"event"}),
+    ("minecraft:behavior.nearest_attackable_target", "attack_interval"): frozenset({"min", "max"}),
+    ("minecraft:behavior.panic", "sound_interval"): frozenset({"range_min", "range_max"}),
+    ("minecraft:despawn", "despawn_from_distance"): frozenset({"min_distance", "max_distance"}),
+    ("minecraft:entity_born", "add"): frozenset({"component_groups"}),
+    ("minecraft:entity_spawned", "add"): frozenset({"component_groups"}),
+    ("minecraft:entity_transformed", "add"): frozenset({"component_groups"}),
+    ("minecraft:tameable", "tame_event"): frozenset({"event", "target"}),
+}
+
+# Campos folha que o cliente exige como STRING de um enum fechado.  Aplica-se em
+# qualquer profundidade (o campo so aparece dentro de damage_sensor.triggers[]).
+# `deals_damage` era Boolean e virou enum em fv 1.21.40 (Update1.21.40.md:
+# "changed from a Boolean to supporting three values"); `no_but_entity_effects_apply`
+# foi acrescentado em 1.26.20 (Update1.26.20.md).  Contagem vanilla:
+# no=30, yes=17, no_but_entity_effects_apply=19, no_but_side_effects_apply=4.
+# `{"value": false}` nao e aceite - e o cliente nem chega a reportar quando a
+# entidade ja falhou por outro motivo.
+LEAF_ENUM_FIELDS = {
+    "deals_damage": frozenset(
+        {"yes", "no", "no_but_side_effects_apply", "no_but_entity_effects_apply"}),
+}
+
+# Componentes de BLOCO que o cliente 1.26.52 reporta como deprecated.  Nao
+# constam em nenhum dos blocos vanilla dos samples; aparecem so na documentacao
+# (Blocks.html), que diz: "The default is `solid` if this component is
+# omitted."  Ou seja, declarar `"solid"` e redundante E quebra o bloco: os 3
+# blocos que o tinham viraram "Unknown block during Deferred BlockDescriptor
+# resolution" e sumiram do mundo.
+DEPRECATED_BLOCK_COMPONENTS = frozenset({"minecraft:breathability"})

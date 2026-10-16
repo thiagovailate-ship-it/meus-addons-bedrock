@@ -16,11 +16,16 @@ criada para que a mesma classe de erro não volte a passar.
 
 ## Camada 0 — teste real no cliente (Bedrock 1.26.52, iOS)
 
-O log real apontou 7 classes de erro. **Nenhuma delas era detectável pelas
-camadas 1–4 da forma como estavam**: os schemas oficiais da Mojang são lenientes
-nesses pontos, e o mock do harness era menos fiel que o cliente. Todas foram
-corrigidas na fonte (`tools/content_model.py` e geradores, não nos arquivos
-gerados) e cada uma virou uma checagem permanente.
+Esta camada tem **dois logs reais**, coletados em duas instalações diferentes do
+add-on. O primeiro (v1.0.0) apontou 9 classes de erro; o segundo (v1.0.1) apontou
+mais 5 classes que estavam **mascaradas** atrás das primeiras. Nenhuma delas era
+detectável pelas camadas 1–4 da forma como estavam: os schemas oficiais da
+Mojang são lenientes nesses pontos, e o mock do harness era menos fiel que o
+cliente. Todas foram corrigidas na fonte (`tools/content_model.py`,
+`tools/gen_bp.py` e `tools/bedrock_names.py`, não nos arquivos gerados) e cada
+uma virou uma checagem permanente.
+
+### Primeiro log (v1.0.0 → v1.0.1)
 
 | # | Erro no log do cliente | Causa raiz | Correção | Regra permanente criada |
 |---|---|---|---|---|
@@ -52,7 +57,51 @@ que a próxima rodada de teste revelaria:
   exato. Já `defend_trusted_target.attack_interval` segue **inteiro** — o schema
   oficial o declara `"type": "integer"`, e mudar isso teria sido um falso positivo.
 
-### Por que o harness não pegou nada disso
+### Segundo log real (v1.0.1 → v1.0.2)
+
+O mesmo cliente, após importar a v1.0.1. Os 9 erros anteriores **desapareceram**
+— o que confirma aquelas correções. Restaram 5 classes novas, todas escondidas
+atrás das antigas:
+
+| # | Erro no log do cliente | Causa raiz | Correção | Regra permanente criada |
+|---|---|---|---|---|
+| 10 | `minecraft:breathability: member is deprecated` (3 blocos) + `Unknown block during Deferred BlockDescriptor resolution` | componente deprecated; **o bloco deixava de ser registrado** e sumia do mundo. Nenhum bloco vanilla o usa, e a documentação (`Blocks.html`) diz que o default já é `"solid"` | removido do gerador — **zero mudança de comportamento**, porque o valor declarado era exatamente o default | camada 4: componentes de bloco deprecated |
+| 11 | `hurt_by_target.alert_same_type: not present in the Schema` (2 entidades) | campo removido do schema. **Os forms oficiais ainda o listam como boolean** — estão desatualizados em relação ao parser | removido. Era **redundante**: o alerta de matilha já estava implementado em `minecraft:angry.broadcast_anger_on_being_attacked` + `broadcast_targets` (padrão `piglin.json` fv 1.26.20). No triceratops, `broadcast_targets` foi declarado explicitamente | camada 6: campos rejeitados pelo cliente (log real vence documentação) |
+| 12 | `avoid_mob_type.sound_interval.range_min/range_max: not present in the Schema` (2 entidades) | a forma de `sound_interval` **varia por componente** | `{min,max}` só em `avoid_mob_type`. `panic` e `angry` **mantiveram** `{range_min,range_max}` — o vanilla prova (hoglin/piglin vs. 4 usos em `angry`) e o cliente ficou em silêncio sobre eles | camada 6: membros de objetos aninhados, por componente |
+| 13 | `nearest_attackable_target.entity_types[1].must_see_forget_duration: invalid numeric value` (2 entidades) | o campo só é válido **no nível do componente**; o censo vanilla tem 8 usos lá e **0** dentro de `entity_types` | removido das entradas; passa a valer o valor do componente (rex 9.0, raptor 6.0) | camada 6: membros válidos dentro de `entity_types[]`, por componente |
+| 14 | `[paleo:error] journal_ui.open: cannot read property 'rex' of undefined` | a fábrica do journal declarava `found/studied/hatched/raised`, mas o código lia **`.bonded`** — e `raised` nunca foi usado por ninguém. `bumpJournal` se autocorrigia ao *escrever*, então o bug só aparecia em quem **nunca** tinha criado um vínculo: exatamente quem abre o diário pela primeira vez | `JOURNAL_BUCKETS` como fonte única; leitores e escritores passam por `journalBucket()`, que autocorrige; `normalizeJournal()` re-afirma os buckets ao carregar um save antigo | seção `[12]` do play-through: jogador **novo** visita todas as telas do diário |
+
+### O detalhe que mudou a forma de investigar: o cliente aborta no primeiro erro
+
+O log reporta **um** erro por entidade e para. As 4 entidades falhavam, então
+tudo que estivesse depois do primeiro erro em cada arquivo ficou invisível. Isso
+teve duas consequências práticas:
+
+- **Corrigir só o que o log mostrou teria sido insuficiente.** `alert_same_type`
+  apareceu em 1 entidade no log, mas existia em 2; `sound_interval` errado
+  apareceu em 2, mas o censo interno achou todas as ocorrências por componente.
+  A varredura foi feita sobre o pacote inteiro, não sobre o log.
+- **Silêncio do cliente sobre um arquivo que já falhou não é evidência de
+  validade.** Para os blocos valeu o raciocínio inverso e ele foi produtivo: a
+  ordem dos componentes no JSON prova que `map_color` (índice 6),
+  `material_instances` (5), `geometry` (4), `selection_box` (1),
+  `light_dampening` (7) e `friction` (8) foram parseados **antes** de
+  `breathability` (9) — logo estão confirmados como aceitos, e a decisão anterior
+  de não convertê-los deixou de ser inferência. `sound`/`tags`/`loot` vinham
+  depois (mascarados), mas `incubator` e `research_bench` não tinham
+  `breathability` e usam as mesmas formas sem nenhum erro: ficam cobertos por
+  eles.
+
+### Um bug latente achado por varredura, não pelo log
+
+Cruzando cada par `(componente, campo)` do pacote com as 128 entidades vanilla,
+sobrou um par sem referência: `damage_sensor.deals_damage` escrito como
+`{"value": false}`. O vanilla usa **string** em 70 ocorrências (`no`=30,
+`no_but_entity_effects_apply`=19, `yes`=17, `no_but_side_effects_apply`=4) e o
+`Update1.21.40.md` oficial é explícito: *"the `deals_damage` field has been
+changed from a Boolean to supporting three values"*. Corrigido para `"no"`.
+O cliente nunca reportaria isso: o compsognathus já abortava antes.
+
 
 Duas lacunas de fidelidade, ambas corrigidas:
 
@@ -76,10 +125,62 @@ bedrock-samples 1.26.50.4**:
 
 | Regra | Severidade | Resultado no vanilla |
 |---|---|---|
+| **checker real inteiro** (`check_entity_fields.check_doc` aplicado ao vanilla, inclui todas as regras de profundidade) | FAIL | **limpa** (0 violações) |
 | componente removido (`pushable`) | FAIL | **limpa** (0 violações) |
 | campo float-range fora de `{min,max}` | FAIL | **limpa** (0 violações) |
 | campo ausente do form oficial | aviso | 35 divergências → os forms são incompletos |
 | tipo divergente do form | aviso | 41 divergências → os forms são lenientes |
+
+A primeira linha é a calibração mais forte disponível: em vez de reimplementar as
+regras, ela roda **o checker de produção** sobre o vanilla. É o que garante que as
+regras de profundidade criadas a partir do segundo log (membros de
+`entity_types[]`, membros de objetos aninhados, enums folha) não acusam o
+conteúdo da Mojang.
+
+Duas ressalvas honestas sobre a tabela de avisos: os forms oficiais provaram estar
+**desatualizados** em relação ao parser (listavam `alert_same_type`, que o cliente
+rejeita), então a hierarquia de evidência adotada é **log real do cliente > censo
+vanilla > forms/documentação**. E o censo vanilla é um subconjunto estreito — os
+98 blocos dos samples, por exemplo, não usam `friction`/`light_emission`/`sound`,
+o que não significa que sejam inválidos.
+
+### Teste de mutação: as regras têm dentes
+
+Cada regra nova foi validada reinjetando o defeito correspondente numa cópia do
+pacote e confirmando que o pipeline reprova. Foram 6 classes de mutação e **6
+detectadas**:
+
+| Mutação | Detectada por |
+|---|---|
+| `avoid_mob_type.sound_interval` de volta a `{range_min,range_max}` | camada 6 |
+| `angry.sound_interval` trocado para `{min,max}` | camada 6 — **prova a precisão por componente**: a regra não é um rename global, ela sabe que `angry` e `avoid_mob_type` exigem formas diferentes |
+| `hurt_by_target.alert_same_type` reinserido | camada 6 |
+| `entity_types[1].must_see_forget_duration` reinserido | camada 6 |
+| `damage_sensor.deals_damage` de volta a `{"value": false}` | camada 6 |
+| `minecraft:breathability` reinserido num bloco | camada 4 |
+
+O bug do journal foi validado do mesmo modo, no harness: restaurando os
+`store.js`/`journal.js` do commit anterior, a seção `[12]` **falha 3 asserções** e
+captura exatamente a classe de erro do cliente; com a correção, passam.
+
+### Reprodutibilidade do artefato
+
+Dois defeitos faziam o `.mcaddon` mudar de bytes sem nenhuma mudança de conteúdo,
+o que tornava o SHA-256 publicado inverificável:
+
+- `tools/gen_sounds.py` semeava o RNG com `abs(hash(nome))`. O Python randomiza
+  `hash()` de strings por processo (`PYTHONHASHSEED`), então os **45 OGGs** mudavam
+  a cada execução. Trocado por `zlib.crc32(nome)`, que depende só do nome.
+- O libsndfile sorteia um *bitstream serial number* por arquivo Ogg.
+  `normalize_ogg_serial()` o fixa deterministicamente e recalcula os CRCs de
+  página (implementação do CRC-32 Ogg validada reproduzindo byte a byte os CRCs
+  que o próprio libsndfile gravou). Há auto-verificação: o áudio decodificado é
+  comparado antes e depois, e a geração aborta se diferir.
+- `tools/build.py` gravava o mtime de cada entrada no zip. Passou a usar data fixa
+  e percurso ordenado.
+
+Resultado: três execuções completas do pipeline produzem o **mesmo** SHA-256, e o
+hash não muda quando os mtimes dos arquivos são alterados.
 
 O detalhe que torna as duas primeiras confiáveis é o **gating por
 `format_version`**: os samples trazem arquivos legado (`creeper.json` fv 1.26.0
@@ -168,9 +269,9 @@ do `format_version` em que a regra ficou estrita. Quando `tools/.forms/` está
 vendorado, soma-se a comparação campo a campo com os forms oficiais (avisos).
 Calibrado contra as 128 entidades vanilla — ver Camada 0.
 
-**Resultado das camadas 2 a 6: 1023 verificações, 0 falhas.**
+**Resultado das camadas 2 a 6: 1032 verificações, 0 falhas.**
 
-## Camada 7 — play-through headless (42 asserções)
+## Camada 7 — play-through headless (45 asserções)
 
 `tools/simulate.mjs` sobe os **scripts reais do behavior pack** contra um mock
 fiel da Script API (eventos, dynamic properties, inventários, `getBlocks` sobre
@@ -189,8 +290,9 @@ uma grade real de blocos, relógio controlável) e executa o ciclo completo:
 | 9 | duplo toque abre 1 formulário; inventário de outro jogador intocado | ok |
 | 10 | caderno abre pela maleta, tela de objetivos acessível, `/scriptevent paleo:dump` responde | ok |
 | 11 | guardas de fidelidade do mock: rejeita `playerJoin` com `event.player`, rejeita `with` misto, aceita a forma normalizada | ok |
+| 12 | **jogador novo** abre todas as telas do caderno (criaturas + os 4 dossiers) sem erro de script — regressão do segundo log real | ok |
 
-Resultado: **42/42 asserções.**
+Resultado: **45/45 asserções.**
 
 ## Camada 8 — verificação de API contra as type definitions oficiais
 

@@ -147,8 +147,7 @@
                 ]
               },
               "max_dist": 16,
-              "must_see": true,
-              "must_see_forget_duration": 5.0
+              "must_see": true
             }
           ]
         }
@@ -206,7 +205,6 @@
         },
         "minecraft:behavior.hurt_by_target": {
           "priority": 1,
-          "alert_same_type": true,
           "entity_types": [
             {
               "filters": {

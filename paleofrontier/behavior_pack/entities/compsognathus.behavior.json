@@ -109,8 +109,8 @@
           "probability_per_strength": 0.6,
           "avoid_mob_sound": "agitated",
           "sound_interval": {
-            "range_min": 4.0,
-            "range_max": 10.0
+            "min": 4.0,
+            "max": 10.0
           },
           "entity_types": [
             {
@@ -325,9 +325,7 @@
         "triggers": [
           {
             "cause": "fall",
-            "deals_damage": {
-              "value": false
-            }
+            "deals_damage": "no"
           }
         ]
       },

@@ -33,8 +33,51 @@ function emptyIncubators() {
   return { v: 1, items: [] };
 }
 
+/**
+ * Buckets of the field journal.  Every bucket listed here is a counter map
+ * keyed by species key.
+ *
+ * Keep this in sync with the buckets used by systems/journal.js and
+ * systems/creatures.js: a bucket that is written but not declared here makes
+ * the readers crash on a player who has never written it ("cannot read
+ * property 'rex' of undefined").  `bonded` was exactly that bug - the factory
+ * still carried an unused `raised` from an earlier rename.
+ */
+const JOURNAL_BUCKETS = ["found", "studied", "hatched", "bonded"];
+
 function emptyJournal() {
-  return { v: 1, found: {}, studied: {}, hatched: {}, raised: {}, welcomed: false };
+  const journal = { v: 1 };
+  for (const bucket of JOURNAL_BUCKETS) {
+    journal[bucket] = {};
+  }
+  journal.welcomed = false;
+  return journal;
+}
+
+/**
+ * Merges a persisted journal onto a fresh one.
+ *
+ * A plain Object.assign is not enough: a save written by an older version can
+ * carry a bucket as `null`, and that would overwrite the empty object the
+ * factory provided, putting the readers back into the crash.  So every known
+ * bucket is re-asserted to be an object after the merge.
+ */
+function normalizeJournal(parsed) {
+  const journal = emptyJournal();
+  if (!parsed || typeof parsed !== "object") {
+    return journal;
+  }
+  Object.assign(journal, parsed);
+  for (const bucket of JOURNAL_BUCKETS) {
+    const bag = journal[bucket];
+    if (!bag || typeof bag !== "object") {
+      journal[bucket] = {};
+    }
+  }
+  if (typeof journal.welcomed !== "boolean") {
+    journal.welcomed = false;
+  }
+  return journal;
 }
 
 const state = {
@@ -112,7 +155,7 @@ export function journalFor(player) {
     const raw = player.getDynamicProperty(PLAYER_JOURNAL_PREFIX);
     if (typeof raw === "string" && raw.length > 0) {
       try {
-        journal = Object.assign(emptyJournal(), JSON.parse(raw));
+        journal = normalizeJournal(JSON.parse(raw));
       } catch (err) {
         log.warn("store.journal", `unreadable journal for ${player.name}`);
         journal = emptyJournal();
@@ -123,6 +166,25 @@ export function journalFor(player) {
     state.journals.set(player.id, journal);
   }
   return journal;
+}
+
+/**
+ * Returns the counter map of one journal bucket, creating it when missing.
+ *
+ * Reads and writes go through here so that a bucket which is absent from a
+ * persisted journal (older save, or a bucket introduced later) can never make
+ * a reader crash.  `journal[bucket]` alone would be `undefined` and the very
+ * next `[key]` would throw.
+ */
+export function journalBucket(player, bucket) {
+  const journal = journalFor(player);
+  const bag = journal[bucket];
+  if (bag && typeof bag === "object") {
+    return bag;
+  }
+  journal[bucket] = {};
+  markDirty("journals");
+  return journal[bucket];
 }
 
 export function forgetPlayer(playerId) {
@@ -166,8 +228,7 @@ export function flush() {
 
 /** Adds n to a journal counter bucket, e.g. bumpJournal(player,'found','compy'). */
 export function bumpJournal(player, bucket, key, n = 1) {
-  const journal = journalFor(player);
-  const bag = journal[bucket] || (journal[bucket] = {});
+  const bag = journalBucket(player, bucket);
   bag[key] = (bag[key] || 0) + n;
   markDirty("journals");
   return bag[key];

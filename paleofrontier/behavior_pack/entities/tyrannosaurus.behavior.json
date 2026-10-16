@@ -165,8 +165,7 @@
                 "value": "player"
               },
               "max_dist": 22,
-              "must_see": true,
-              "must_see_forget_duration": 7.0
+              "must_see": true
             }
           ]
         }
