@@ -1,0 +1,1708 @@
+{
+ "compsognathus": {
+  "texture": [
+   64,
+   32
+  ],
+  "cubes": [
+   {
+    "bone": "body",
+    "kind": "torso",
+    "origin": [
+     -2,
+     4,
+     -2
+    ],
+    "size": [
+     4,
+     4,
+     6
+    ],
+    "uv": [
+     0,
+     0
+    ]
+   },
+   {
+    "bone": "body",
+    "kind": "torso",
+    "origin": [
+     -2,
+     4,
+     3
+    ],
+    "size": [
+     4,
+     4,
+     3
+    ],
+    "uv": [
+     21,
+     0
+    ]
+   },
+   {
+    "bone": "neck",
+    "kind": "neck",
+    "origin": [
+     -1,
+     5,
+     -4
+    ],
+    "size": [
+     2,
+     3,
+     3
+    ],
+    "uv": [
+     37,
+     11
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "head",
+    "origin": [
+     -2,
+     5,
+     -7
+    ],
+    "size": [
+     4,
+     3,
+     3
+    ],
+    "uv": [
+     36,
+     0
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "head",
+    "origin": [
+     -1,
+     5,
+     -9
+    ],
+    "size": [
+     2,
+     2,
+     2
+    ],
+    "uv": [
+     44,
+     18
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "head",
+    "origin": [
+     -2,
+     7,
+     -7
+    ],
+    "size": [
+     4,
+     1,
+     2
+    ],
+    "uv": [
+     0,
+     24
+    ]
+   },
+   {
+    "bone": "jaw",
+    "kind": "jaw",
+    "origin": [
+     -1,
+     4,
+     -9
+    ],
+    "size": [
+     2,
+     1,
+     5
+    ],
+    "uv": [
+     0,
+     11
+    ]
+   },
+   {
+    "bone": "tail_1",
+    "kind": "tail",
+    "origin": [
+     -1,
+     5,
+     6
+    ],
+    "size": [
+     2,
+     2,
+     3
+    ],
+    "uv": [
+     48,
+     11
+    ]
+   },
+   {
+    "bone": "tail_2",
+    "kind": "tail",
+    "origin": [
+     -1,
+     5,
+     9
+    ],
+    "size": [
+     2,
+     2,
+     3
+    ],
+    "uv": [
+     0,
+     18
+    ]
+   },
+   {
+    "bone": "tail_3",
+    "kind": "tail",
+    "origin": [
+     0,
+     5,
+     12
+    ],
+    "size": [
+     1,
+     1,
+     4
+    ],
+    "uv": [
+     11,
+     18
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "leg",
+    "origin": [
+     -3,
+     2,
+     2
+    ],
+    "size": [
+     2,
+     3,
+     3
+    ],
+    "uv": [
+     15,
+     11
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "leg",
+    "origin": [
+     -3,
+     0,
+     3
+    ],
+    "size": [
+     1,
+     2,
+     1
+    ],
+    "uv": [
+     23,
+     24
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "foot",
+    "origin": [
+     -3,
+     0,
+     1
+    ],
+    "size": [
+     2,
+     1,
+     3
+    ],
+    "uv": [
+     22,
+     18
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "leg",
+    "origin": [
+     1,
+     2,
+     2
+    ],
+    "size": [
+     2,
+     3,
+     3
+    ],
+    "uv": [
+     26,
+     11
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "leg",
+    "origin": [
+     2,
+     0,
+     3
+    ],
+    "size": [
+     1,
+     2,
+     1
+    ],
+    "uv": [
+     28,
+     24
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "foot",
+    "origin": [
+     1,
+     0,
+     1
+    ],
+    "size": [
+     2,
+     1,
+     3
+    ],
+    "uv": [
+     33,
+     18
+    ]
+   },
+   {
+    "bone": "arm_left",
+    "kind": "arm",
+    "origin": [
+     -3,
+     3,
+     -1
+    ],
+    "size": [
+     1,
+     2,
+     1
+    ],
+    "uv": [
+     13,
+     24
+    ]
+   },
+   {
+    "bone": "arm_left",
+    "kind": "arm",
+    "origin": [
+     -3,
+     2,
+     -2
+    ],
+    "size": [
+     1,
+     1,
+     1
+    ],
+    "uv": [
+     33,
+     24
+    ]
+   },
+   {
+    "bone": "arm_right",
+    "kind": "arm",
+    "origin": [
+     2,
+     3,
+     -1
+    ],
+    "size": [
+     1,
+     2,
+     1
+    ],
+    "uv": [
+     18,
+     24
+    ]
+   },
+   {
+    "bone": "arm_right",
+    "kind": "arm",
+    "origin": [
+     2,
+     2,
+     -2
+    ],
+    "size": [
+     1,
+     1,
+     1
+    ],
+    "uv": [
+     38,
+     24
+    ]
+   }
+  ]
+ },
+ "triceratops": {
+  "texture": [
+   128,
+   128
+  ],
+  "cubes": [
+   {
+    "bone": "body",
+    "kind": "torso",
+    "origin": [
+     -8,
+     15,
+     -10
+    ],
+    "size": [
+     16,
+     13,
+     22
+    ],
+    "uv": [
+     0,
+     0
+    ]
+   },
+   {
+    "bone": "body",
+    "kind": "torso",
+    "origin": [
+     -7,
+     15,
+     10
+    ],
+    "size": [
+     14,
+     12,
+     8
+    ],
+    "uv": [
+     77,
+     0
+    ]
+   },
+   {
+    "bone": "neck",
+    "kind": "neck",
+    "origin": [
+     -6,
+     15,
+     -16
+    ],
+    "size": [
+     12,
+     10,
+     7
+    ],
+    "uv": [
+     54,
+     36
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "frill",
+    "origin": [
+     -8,
+     19,
+     -18
+    ],
+    "size": [
+     16,
+     11,
+     3
+    ],
+    "uv": [
+     0,
+     72
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "head",
+    "origin": [
+     -6,
+     15,
+     -24
+    ],
+    "size": [
+     12,
+     8,
+     8
+    ],
+    "uv": [
+     0,
+     55
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "beak",
+    "origin": [
+     -3,
+     15,
+     -27
+    ],
+    "size": [
+     6,
+     5,
+     4
+    ],
+    "uv": [
+     78,
+     87
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "horn",
+    "origin": [
+     -1,
+     22,
+     -24
+    ],
+    "size": [
+     2,
+     5,
+     2
+    ],
+    "uv": [
+     108,
+     87
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "horn",
+    "origin": [
+     -5,
+     22,
+     -21
+    ],
+    "size": [
+     2,
+     7,
+     2
+    ],
+    "uv": [
+     99,
+     87
+    ]
+   },
+   {
+    "bone": "jaw",
+    "kind": "jaw",
+    "origin": [
+     -4,
+     12,
+     -26
+    ],
+    "size": [
+     8,
+     3,
+     11
+    ],
+    "uv": [
+     39,
+     72
+    ]
+   },
+   {
+    "bone": "tail_1",
+    "kind": "tail",
+    "origin": [
+     -4,
+     17,
+     18
+    ],
+    "size": [
+     8,
+     8,
+     8
+    ],
+    "uv": [
+     41,
+     55
+    ]
+   },
+   {
+    "bone": "tail_2",
+    "kind": "tail",
+    "origin": [
+     -3,
+     17,
+     26
+    ],
+    "size": [
+     6,
+     6,
+     7
+    ],
+    "uv": [
+     78,
+     72
+    ]
+   },
+   {
+    "bone": "tail_3",
+    "kind": "tail",
+    "origin": [
+     -2,
+     17,
+     33
+    ],
+    "size": [
+     4,
+     4,
+     6
+    ],
+    "uv": [
+     57,
+     87
+    ]
+   },
+   {
+    "bone": "leg_front_left",
+    "kind": "leg",
+    "origin": [
+     -9,
+     7,
+     -8
+    ],
+    "size": [
+     4,
+     9,
+     6
+    ],
+    "uv": [
+     74,
+     55
+    ]
+   },
+   {
+    "bone": "leg_front_left",
+    "kind": "leg",
+    "origin": [
+     -9,
+     0,
+     -8
+    ],
+    "size": [
+     4,
+     8,
+     5
+    ],
+    "uv": [
+     19,
+     87
+    ]
+   },
+   {
+    "bone": "leg_front_right",
+    "kind": "leg",
+    "origin": [
+     5,
+     7,
+     -8
+    ],
+    "size": [
+     4,
+     9,
+     6
+    ],
+    "uv": [
+     95,
+     55
+    ]
+   },
+   {
+    "bone": "leg_front_right",
+    "kind": "leg",
+    "origin": [
+     5,
+     0,
+     -8
+    ],
+    "size": [
+     4,
+     8,
+     5
+    ],
+    "uv": [
+     38,
+     87
+    ]
+   },
+   {
+    "bone": "leg_back_left",
+    "kind": "leg",
+    "origin": [
+     -10,
+     7,
+     9
+    ],
+    "size": [
+     5,
+     10,
+     8
+    ],
+    "uv": [
+     0,
+     36
+    ]
+   },
+   {
+    "bone": "leg_back_left",
+    "kind": "leg",
+    "origin": [
+     -9,
+     0,
+     10
+    ],
+    "size": [
+     4,
+     8,
+     5
+    ],
+    "uv": [
+     105,
+     72
+    ]
+   },
+   {
+    "bone": "leg_back_right",
+    "kind": "leg",
+    "origin": [
+     5,
+     7,
+     9
+    ],
+    "size": [
+     5,
+     10,
+     8
+    ],
+    "uv": [
+     27,
+     36
+    ]
+   },
+   {
+    "bone": "leg_back_right",
+    "kind": "leg",
+    "origin": [
+     5,
+     0,
+     10
+    ],
+    "size": [
+     4,
+     8,
+     5
+    ],
+    "uv": [
+     0,
+     87
+    ]
+   }
+  ]
+ },
+ "velociraptor": {
+  "texture": [
+   128,
+   64
+  ],
+  "cubes": [
+   {
+    "bone": "body",
+    "kind": "torso",
+    "origin": [
+     -4,
+     12,
+     -4
+    ],
+    "size": [
+     8,
+     8,
+     13
+    ],
+    "uv": [
+     0,
+     0
+    ]
+   },
+   {
+    "bone": "body",
+    "kind": "torso",
+    "origin": [
+     -3,
+     12,
+     8
+    ],
+    "size": [
+     6,
+     8,
+     6
+    ],
+    "uv": [
+     43,
+     0
+    ]
+   },
+   {
+    "bone": "neck",
+    "kind": "neck",
+    "origin": [
+     -2,
+     16,
+     -9
+    ],
+    "size": [
+     4,
+     5,
+     6
+    ],
+    "uv": [
+     79,
+     22
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "head",
+    "origin": [
+     -3,
+     17,
+     -15
+    ],
+    "size": [
+     6,
+     5,
+     7
+    ],
+    "uv": [
+     29,
+     22
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "head",
+    "origin": [
+     -2,
+     17,
+     -19
+    ],
+    "size": [
+     4,
+     3,
+     4
+    ],
+    "uv": [
+     77,
+     35
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "crest",
+    "origin": [
+     -3,
+     21,
+     -14
+    ],
+    "size": [
+     6,
+     1,
+     5
+    ],
+    "uv": [
+     94,
+     35
+    ]
+   },
+   {
+    "bone": "jaw",
+    "kind": "jaw",
+    "origin": [
+     -2,
+     15,
+     -19
+    ],
+    "size": [
+     4,
+     2,
+     10
+    ],
+    "uv": [
+     0,
+     22
+    ]
+   },
+   {
+    "bone": "tail_1",
+    "kind": "tail",
+    "origin": [
+     -2,
+     14,
+     14
+    ],
+    "size": [
+     4,
+     4,
+     7
+    ],
+    "uv": [
+     56,
+     22
+    ]
+   },
+   {
+    "bone": "tail_2",
+    "kind": "tail",
+    "origin": [
+     -1,
+     13,
+     21
+    ],
+    "size": [
+     3,
+     3,
+     7
+    ],
+    "uv": [
+     100,
+     22
+    ]
+   },
+   {
+    "bone": "tail_3",
+    "kind": "tail",
+    "origin": [
+     -1,
+     12,
+     28
+    ],
+    "size": [
+     2,
+     2,
+     8
+    ],
+    "uv": [
+     0,
+     35
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "leg",
+    "origin": [
+     -6,
+     7,
+     5
+    ],
+    "size": [
+     3,
+     8,
+     6
+    ],
+    "uv": [
+     68,
+     0
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "leg",
+    "origin": [
+     -6,
+     3,
+     7
+    ],
+    "size": [
+     2,
+     6,
+     2
+    ],
+    "uv": [
+     59,
+     35
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "foot",
+    "origin": [
+     -6,
+     0,
+     4
+    ],
+    "size": [
+     3,
+     3,
+     6
+    ],
+    "uv": [
+     21,
+     35
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "claw",
+    "origin": [
+     -6,
+     0,
+     2
+    ],
+    "size": [
+     1,
+     2,
+     2
+    ],
+    "uv": [
+     27,
+     46
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "leg",
+    "origin": [
+     3,
+     7,
+     5
+    ],
+    "size": [
+     3,
+     8,
+     6
+    ],
+    "uv": [
+     87,
+     0
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "leg",
+    "origin": [
+     4,
+     3,
+     7
+    ],
+    "size": [
+     2,
+     6,
+     2
+    ],
+    "uv": [
+     68,
+     35
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "foot",
+    "origin": [
+     3,
+     0,
+     4
+    ],
+    "size": [
+     3,
+     3,
+     6
+    ],
+    "uv": [
+     40,
+     35
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "claw",
+    "origin": [
+     5,
+     0,
+     2
+    ],
+    "size": [
+     1,
+     2,
+     2
+    ],
+    "uv": [
+     34,
+     46
+    ]
+   },
+   {
+    "bone": "arm_left",
+    "kind": "arm",
+    "origin": [
+     -6,
+     14,
+     -2
+    ],
+    "size": [
+     2,
+     4,
+     2
+    ],
+    "uv": [
+     117,
+     35
+    ]
+   },
+   {
+    "bone": "arm_left",
+    "kind": "arm",
+    "origin": [
+     -6,
+     12,
+     -3
+    ],
+    "size": [
+     2,
+     3,
+     2
+    ],
+    "uv": [
+     9,
+     46
+    ]
+   },
+   {
+    "bone": "arm_left",
+    "kind": "claw",
+    "origin": [
+     -6,
+     11,
+     -4
+    ],
+    "size": [
+     1,
+     2,
+     1
+    ],
+    "uv": [
+     41,
+     46
+    ]
+   },
+   {
+    "bone": "arm_right",
+    "kind": "arm",
+    "origin": [
+     4,
+     14,
+     -2
+    ],
+    "size": [
+     2,
+     4,
+     2
+    ],
+    "uv": [
+     0,
+     46
+    ]
+   },
+   {
+    "bone": "arm_right",
+    "kind": "arm",
+    "origin": [
+     4,
+     12,
+     -3
+    ],
+    "size": [
+     2,
+     3,
+     2
+    ],
+    "uv": [
+     18,
+     46
+    ]
+   },
+   {
+    "bone": "arm_right",
+    "kind": "claw",
+    "origin": [
+     5,
+     11,
+     -4
+    ],
+    "size": [
+     1,
+     2,
+     1
+    ],
+    "uv": [
+     46,
+     46
+    ]
+   }
+  ]
+ },
+ "tyrannosaurus": {
+  "texture": [
+   256,
+   256
+  ],
+  "cubes": [
+   {
+    "bone": "body",
+    "kind": "torso",
+    "origin": [
+     -11,
+     36,
+     -14
+    ],
+    "size": [
+     22,
+     20,
+     30
+    ],
+    "uv": [
+     0,
+     0
+    ]
+   },
+   {
+    "bone": "body",
+    "kind": "torso",
+    "origin": [
+     -9,
+     36,
+     14
+    ],
+    "size": [
+     18,
+     18,
+     12
+    ],
+    "uv": [
+     0,
+     90
+    ]
+   },
+   {
+    "bone": "neck",
+    "kind": "neck",
+    "origin": [
+     -8,
+     48,
+     -24
+    ],
+    "size": [
+     16,
+     14,
+     12
+    ],
+    "uv": [
+     118,
+     90
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "head",
+    "origin": [
+     -9,
+     50,
+     -44
+    ],
+    "size": [
+     18,
+     16,
+     22
+    ],
+    "uv": [
+     0,
+     51
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "head",
+    "origin": [
+     -7,
+     50,
+     -56
+    ],
+    "size": [
+     14,
+     10,
+     13
+    ],
+    "uv": [
+     175,
+     90
+    ]
+   },
+   {
+    "bone": "head",
+    "kind": "crest",
+    "origin": [
+     -10,
+     64,
+     -40
+    ],
+    "size": [
+     4,
+     4,
+     12
+    ],
+    "uv": [
+     0,
+     144
+    ]
+   },
+   {
+    "bone": "jaw",
+    "kind": "jaw",
+    "origin": [
+     -7,
+     44,
+     -56
+    ],
+    "size": [
+     14,
+     7,
+     32
+    ],
+    "uv": [
+     105,
+     0
+    ]
+   },
+   {
+    "bone": "tail_1",
+    "kind": "tail",
+    "origin": [
+     -8,
+     40,
+     26
+    ],
+    "size": [
+     16,
+     16,
+     18
+    ],
+    "uv": [
+     81,
+     51
+    ]
+   },
+   {
+    "bone": "tail_2",
+    "kind": "tail",
+    "origin": [
+     -6,
+     41,
+     44
+    ],
+    "size": [
+     12,
+     12,
+     16
+    ],
+    "uv": [
+     61,
+     90
+    ]
+   },
+   {
+    "bone": "tail_3",
+    "kind": "tail",
+    "origin": [
+     -4,
+     42,
+     60
+    ],
+    "size": [
+     8,
+     8,
+     14
+    ],
+    "uv": [
+     0,
+     121
+    ]
+   },
+   {
+    "bone": "tail_4",
+    "kind": "tail",
+    "origin": [
+     -2,
+     43,
+     74
+    ],
+    "size": [
+     5,
+     5,
+     12
+    ],
+    "uv": [
+     197,
+     121
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "leg",
+    "origin": [
+     -14,
+     20,
+     8
+    ],
+    "size": [
+     9,
+     20,
+     14
+    ],
+    "uv": [
+     150,
+     51
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "leg",
+    "origin": [
+     -13,
+     8,
+     10
+    ],
+    "size": [
+     7,
+     14,
+     7
+    ],
+    "uv": [
+     45,
+     121
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "leg",
+    "origin": [
+     -12,
+     4,
+     10
+    ],
+    "size": [
+     5,
+     6,
+     5
+    ],
+    "uv": [
+     67,
+     144
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "foot",
+    "origin": [
+     -13,
+     0,
+     4
+    ],
+    "size": [
+     9,
+     4,
+     14
+    ],
+    "uv": [
+     103,
+     121
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "claw",
+    "origin": [
+     -13,
+     0,
+     1
+    ],
+    "size": [
+     3,
+     3,
+     3
+    ],
+    "uv": [
+     161,
+     144
+    ]
+   },
+   {
+    "bone": "leg_left",
+    "kind": "claw",
+    "origin": [
+     -6,
+     0,
+     1
+    ],
+    "size": [
+     3,
+     3,
+     3
+    ],
+    "uv": [
+     174,
+     144
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "leg",
+    "origin": [
+     5,
+     20,
+     8
+    ],
+    "size": [
+     9,
+     20,
+     14
+    ],
+    "uv": [
+     197,
+     51
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "leg",
+    "origin": [
+     6,
+     8,
+     10
+    ],
+    "size": [
+     7,
+     14,
+     7
+    ],
+    "uv": [
+     74,
+     121
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "leg",
+    "origin": [
+     7,
+     4,
+     10
+    ],
+    "size": [
+     5,
+     6,
+     5
+    ],
+    "uv": [
+     88,
+     144
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "foot",
+    "origin": [
+     4,
+     0,
+     4
+    ],
+    "size": [
+     9,
+     4,
+     14
+    ],
+    "uv": [
+     150,
+     121
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "claw",
+    "origin": [
+     10,
+     0,
+     1
+    ],
+    "size": [
+     3,
+     3,
+     3
+    ],
+    "uv": [
+     187,
+     144
+    ]
+   },
+   {
+    "bone": "leg_right",
+    "kind": "claw",
+    "origin": [
+     3,
+     0,
+     1
+    ],
+    "size": [
+     3,
+     3,
+     3
+    ],
+    "uv": [
+     200,
+     144
+    ]
+   },
+   {
+    "bone": "arm_left",
+    "kind": "arm",
+    "origin": [
+     -14,
+     44,
+     -10
+    ],
+    "size": [
+     4,
+     8,
+     4
+    ],
+    "uv": [
+     33,
+     144
+    ]
+   },
+   {
+    "bone": "arm_left",
+    "kind": "arm",
+    "origin": [
+     -14,
+     38,
+     -12
+    ],
+    "size": [
+     3,
+     7,
+     3
+    ],
+    "uv": [
+     109,
+     144
+    ]
+   },
+   {
+    "bone": "arm_left",
+    "kind": "claw",
+    "origin": [
+     -14,
+     36,
+     -14
+    ],
+    "size": [
+     3,
+     3,
+     3
+    ],
+    "uv": [
+     135,
+     144
+    ]
+   },
+   {
+    "bone": "arm_right",
+    "kind": "arm",
+    "origin": [
+     10,
+     44,
+     -10
+    ],
+    "size": [
+     4,
+     8,
+     4
+    ],
+    "uv": [
+     50,
+     144
+    ]
+   },
+   {
+    "bone": "arm_right",
+    "kind": "arm",
+    "origin": [
+     11,
+     38,
+     -12
+    ],
+    "size": [
+     3,
+     7,
+     3
+    ],
+    "uv": [
+     122,
+     144
+    ]
+   },
+   {
+    "bone": "arm_right",
+    "kind": "claw",
+    "origin": [
+     11,
+     36,
+     -14
+    ],
+    "size": [
+     3,
+     3,
+     3
+    ],
+    "uv": [
+     148,
+     144
+    ]
+   }
+  ]
+ }
+}

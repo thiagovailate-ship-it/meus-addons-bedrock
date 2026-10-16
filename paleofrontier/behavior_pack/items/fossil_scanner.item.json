@@ -1,0 +1,52 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paleo:fossil_scanner",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:icon": {
+        "textures": {
+          "default": "paleo_fossil_scanner"
+        }
+      },
+      "minecraft:max_stack_size": 1,
+      "minecraft:tags": {
+        "tags": [
+          "paleo:is_field_tool"
+        ]
+      },
+      "minecraft:durability": {
+        "max_durability": 320,
+        "damage_chance": {
+          "min": 90,
+          "max": 100
+        }
+      },
+      "minecraft:repairable": {
+        "repair_items": [
+          {
+            "items": [
+              "minecraft:copper_ingot"
+            ],
+            "repair_amount": "query.max_durability * 0.25"
+          },
+          {
+            "items": [
+              "paleo:fossil_scanner"
+            ],
+            "repair_amount": "context.other->query.remaining_durability"
+          }
+        ]
+      },
+      "minecraft:cooldown": {
+        "category": "paleo_scanner",
+        "duration": 8.0,
+        "type": "use"
+      }
+    }
+  }
+}

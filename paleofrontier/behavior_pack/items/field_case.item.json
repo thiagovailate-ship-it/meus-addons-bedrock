@@ -1,0 +1,29 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paleo:field_case",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:icon": {
+        "textures": {
+          "default": "paleo_field_case"
+        }
+      },
+      "minecraft:max_stack_size": 1,
+      "minecraft:tags": {
+        "tags": [
+          "paleo:is_field_tool"
+        ]
+      },
+      "minecraft:cooldown": {
+        "category": "paleo_fieldcase",
+        "duration": 0.5,
+        "type": "use"
+      }
+    }
+  }
+}

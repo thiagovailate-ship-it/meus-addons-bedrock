@@ -1,0 +1,43 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "paleo:research_bench"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "GBG",
+      "ITI",
+      "SPS"
+    ],
+    "key": {
+      "G": {
+        "item": "minecraft:glass"
+      },
+      "B": {
+        "item": "minecraft:book"
+      },
+      "I": {
+        "item": "minecraft:iron_ingot"
+      },
+      "T": {
+        "item": "minecraft:crafting_table"
+      },
+      "S": {
+        "item": "paleo:bone_shard"
+      },
+      "P": {
+        "item": "minecraft:oak_planks"
+      }
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
+    },
+    "result": {
+      "item": "paleo:research_bench",
+      "count": 1
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "resource_pack_name": "paleofrontier",
+  "texture_name": "atlas.terrain",
+  "padding": 8,
+  "num_mip_levels": 4,
+  "texture_data": {
+    "paleo_fossil_deposit": {
+      "textures": [
+        "textures/blocks/paleo_fossil_deposit"
+      ]
+    },
+    "paleo_shale_matrix": {
+      "textures": [
+        "textures/blocks/paleo_shale_matrix"
+      ]
+    },
+    "paleo_bone_bed": {
+      "textures": [
+        "textures/blocks/paleo_bone_bed"
+      ]
+    },
+    "paleo_research_bench_side": {
+      "textures": [
+        "textures/blocks/paleo_research_bench_side"
+      ]
+    },
+    "paleo_research_bench_top": {
+      "textures": [
+        "textures/blocks/paleo_research_bench_top"
+      ]
+    },
+    "paleo_research_bench_front": {
+      "textures": [
+        "textures/blocks/paleo_research_bench_front"
+      ]
+    },
+    "paleo_incubator_side": {
+      "textures": [
+        "textures/blocks/paleo_incubator_side"
+      ]
+    },
+    "paleo_incubator_top": {
+      "textures": [
+        "textures/blocks/paleo_incubator_top"
+      ]
+    },
+    "paleo_incubator_chamber_0": {
+      "textures": [
+        "textures/blocks/paleo_incubator_chamber_0"
+      ]
+    },
+    "paleo_incubator_chamber_1": {
+      "textures": [
+        "textures/blocks/paleo_incubator_chamber_1"
+      ]
+    },
+    "paleo_incubator_chamber_2": {
+      "textures": [
+        "textures/blocks/paleo_incubator_chamber_2"
+      ]
+    },
+    "paleo_incubator_chamber_3": {
+      "textures": [
+        "textures/blocks/paleo_incubator_chamber_3"
+      ]
+    },
+    "paleo_incubator_chamber_4": {
+      "textures": [
+        "textures/blocks/paleo_incubator_chamber_4"
+      ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "paleofrontier-tools",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Static validation harness for the PALEOFRONTIER add-on",
+  "type": "module",
+  "dependencies": {
+    "ajv": "8.18.0"
+  }
+}

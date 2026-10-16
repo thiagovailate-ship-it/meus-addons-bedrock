@@ -1,0 +1,7 @@
+tools/node_modules/
+tools/.schemas/
+tools/.forms/
+node_modules/
+.review/
+__pycache__/
+*.pyc

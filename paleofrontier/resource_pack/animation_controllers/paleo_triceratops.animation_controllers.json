@@ -1,0 +1,67 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.paleo_triceratops": {
+      "initial_state": "calm",
+      "states": {
+        "calm": {
+          "blend_transition": 0.2,
+          "animations": [
+            {
+              "idle": "query.modified_move_speed <= 0.05"
+            },
+            {
+              "walk": "query.modified_move_speed"
+            },
+            "look_at_target",
+            {
+              "eat": "query.is_eating"
+            }
+          ],
+          "transitions": [
+            {
+              "aggressive": "query.is_angry"
+            },
+            {
+              "sleeping": "query.is_sleeping"
+            }
+          ]
+        },
+        "aggressive": {
+          "blend_transition": 0.2,
+          "animations": [
+            {
+              "idle": "query.modified_move_speed <= 0.05"
+            },
+            {
+              "walk": "query.modified_move_speed"
+            },
+            "look_at_target",
+            {
+              "roar": "1.0"
+            }
+          ],
+          "transitions": [
+            {
+              "calm": "!query.is_angry"
+            },
+            {
+              "sleeping": "query.is_sleeping"
+            }
+          ]
+        },
+        "sleeping": {
+          "blend_transition": 0.3,
+          "animations": [
+            "rest"
+          ],
+          "transitions": [
+            {
+              "calm": "!query.is_sleeping"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

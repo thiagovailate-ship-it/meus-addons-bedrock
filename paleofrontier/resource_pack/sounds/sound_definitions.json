@@ -1,0 +1,625 @@
+{
+  "format_version": "1.26.50",
+  "sound_definitions": {
+    "paleo.dig.sediment": {
+      "category": "block",
+      "sounds": [
+        {
+          "name": "sounds/paleo/dig/sediment/sediment1",
+          "volume": 0.9,
+          "pitch": [
+            0.9,
+            1.15
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        },
+        {
+          "name": "sounds/paleo/dig/sediment/sediment2",
+          "volume": 0.9,
+          "pitch": [
+            0.9,
+            1.15
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        },
+        {
+          "name": "sounds/paleo/dig/sediment/sediment3",
+          "volume": 0.9,
+          "pitch": [
+            0.9,
+            1.15
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.dig.brush": {
+      "category": "block",
+      "sounds": [
+        {
+          "name": "sounds/paleo/dig/brush/brush1",
+          "volume": 0.8,
+          "pitch": [
+            0.95,
+            1.2
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        },
+        {
+          "name": "sounds/paleo/dig/brush/brush2",
+          "volume": 0.8,
+          "pitch": [
+            0.95,
+            1.2
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.discover": {
+      "category": "player",
+      "sounds": [
+        {
+          "name": "sounds/paleo/discover/discover",
+          "volume": 1.0,
+          "pitch": [
+            1.0,
+            1.05
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.discover.rare": {
+      "category": "player",
+      "sounds": [
+        {
+          "name": "sounds/paleo/discover/rare/discover_rare",
+          "volume": 1.0,
+          "pitch": [
+            1.0,
+            1.03
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.scanner.ping": {
+      "category": "player",
+      "sounds": [
+        {
+          "name": "sounds/paleo/scanner/ping/scan_ping",
+          "volume": 0.9,
+          "pitch": [
+            1.0,
+            1.08
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.scanner.strong": {
+      "category": "player",
+      "sounds": [
+        {
+          "name": "sounds/paleo/scanner/strong/scan_strong",
+          "volume": 1.0,
+          "pitch": [
+            1.0,
+            1.04
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.scanner.empty": {
+      "category": "player",
+      "sounds": [
+        {
+          "name": "sounds/paleo/scanner/empty/scan_empty",
+          "volume": 0.7,
+          "pitch": [
+            1.0,
+            1.05
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.lab.process": {
+      "category": "player",
+      "sounds": [
+        {
+          "name": "sounds/paleo/lab/process/lab_process",
+          "volume": 1.0,
+          "pitch": [
+            1.0,
+            1.04
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.lab.identify": {
+      "category": "player",
+      "sounds": [
+        {
+          "name": "sounds/paleo/lab/identify/lab_identify",
+          "volume": 1.0,
+          "pitch": [
+            1.0,
+            1.03
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.lab.deny": {
+      "category": "player",
+      "sounds": [
+        {
+          "name": "sounds/paleo/lab/deny/lab_deny",
+          "volume": 0.8,
+          "pitch": [
+            1.0,
+            1.05
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.bench.open": {
+      "category": "block",
+      "sounds": [
+        {
+          "name": "sounds/paleo/bench/open/bench_open",
+          "volume": 0.9,
+          "pitch": [
+            0.95,
+            1.05
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.incubator.start": {
+      "category": "block",
+      "sounds": [
+        {
+          "name": "sounds/paleo/incubator/start/incu_start",
+          "volume": 1.0,
+          "pitch": [
+            1.0,
+            1.04
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.incubator.progress": {
+      "category": "block",
+      "sounds": [
+        {
+          "name": "sounds/paleo/incubator/progress/incu_progress",
+          "volume": 0.55,
+          "pitch": [
+            1.0,
+            1.1
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.incubator.hatch": {
+      "category": "block",
+      "sounds": [
+        {
+          "name": "sounds/paleo/incubator/hatch/incu_hatch",
+          "volume": 1.0,
+          "pitch": [
+            1.0,
+            1.03
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.compy.idle": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/compy/idle/compy_idle1",
+          "volume": 0.7,
+          "pitch": [
+            0.95,
+            1.2
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        },
+        {
+          "name": "sounds/paleo/mob/compy/idle/compy_idle2",
+          "volume": 0.7,
+          "pitch": [
+            0.95,
+            1.2
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.compy.hurt": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/compy/hurt/compy_hurt",
+          "volume": 0.9,
+          "pitch": [
+            0.95,
+            1.1
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.compy.death": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/compy/death/compy_death",
+          "volume": 0.9,
+          "pitch": [
+            0.95,
+            1.05
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.compy.step": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/compy/step/compy_step1",
+          "volume": 0.35,
+          "pitch": [
+            0.9,
+            1.2
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        },
+        {
+          "name": "sounds/paleo/mob/compy/step/compy_step2",
+          "volume": 0.35,
+          "pitch": [
+            0.9,
+            1.2
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.trike.idle": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/trike/idle/trike_idle1",
+          "volume": 0.9,
+          "pitch": [
+            0.9,
+            1.1
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        },
+        {
+          "name": "sounds/paleo/mob/trike/idle/trike_idle2",
+          "volume": 0.9,
+          "pitch": [
+            0.9,
+            1.1
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.trike.hurt": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/trike/hurt/trike_hurt",
+          "volume": 1.0,
+          "pitch": [
+            0.9,
+            1.05
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.trike.death": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/trike/death/trike_death",
+          "volume": 1.0,
+          "pitch": [
+            0.9,
+            1.0
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.trike.step": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/trike/step/trike_step1",
+          "volume": 0.75,
+          "pitch": [
+            0.85,
+            1.1
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        },
+        {
+          "name": "sounds/paleo/mob/trike/step/trike_step2",
+          "volume": 0.75,
+          "pitch": [
+            0.85,
+            1.1
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.trike.angry": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/trike/angry/trike_angry",
+          "volume": 1.0,
+          "pitch": [
+            0.92,
+            1.05
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.raptor.idle": {
+      "category": "hostile",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/raptor/idle/raptor_idle1",
+          "volume": 0.85,
+          "pitch": [
+            0.95,
+            1.15
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        },
+        {
+          "name": "sounds/paleo/mob/raptor/idle/raptor_idle2",
+          "volume": 0.85,
+          "pitch": [
+            0.95,
+            1.15
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.raptor.hurt": {
+      "category": "hostile",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/raptor/hurt/raptor_hurt",
+          "volume": 0.95,
+          "pitch": [
+            0.95,
+            1.1
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.raptor.death": {
+      "category": "hostile",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/raptor/death/raptor_death",
+          "volume": 0.95,
+          "pitch": [
+            0.95,
+            1.05
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.raptor.step": {
+      "category": "hostile",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/raptor/step/raptor_step1",
+          "volume": 0.45,
+          "pitch": [
+            0.9,
+            1.2
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        },
+        {
+          "name": "sounds/paleo/mob/raptor/step/raptor_step2",
+          "volume": 0.45,
+          "pitch": [
+            0.9,
+            1.2
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.raptor.screech": {
+      "category": "hostile",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/raptor/screech/raptor_screech",
+          "volume": 1.0,
+          "pitch": [
+            0.97,
+            1.08
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.rex.idle": {
+      "category": "hostile",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/rex/idle/rex_idle1",
+          "volume": 1.0,
+          "pitch": [
+            0.88,
+            1.05
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        },
+        {
+          "name": "sounds/paleo/mob/rex/idle/rex_idle2",
+          "volume": 1.0,
+          "pitch": [
+            0.88,
+            1.05
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.rex.hurt": {
+      "category": "hostile",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/rex/hurt/rex_hurt",
+          "volume": 1.0,
+          "pitch": [
+            0.9,
+            1.02
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.rex.death": {
+      "category": "hostile",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/rex/death/rex_death",
+          "volume": 1.0,
+          "pitch": [
+            0.9,
+            1.0
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.rex.step": {
+      "category": "hostile",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/rex/step/rex_step1",
+          "volume": 0.95,
+          "pitch": [
+            0.8,
+            1.0
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        },
+        {
+          "name": "sounds/paleo/mob/rex/step/rex_step2",
+          "volume": 0.95,
+          "pitch": [
+            0.8,
+            1.0
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.rex.roar": {
+      "category": "hostile",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/rex/roar/rex_roar",
+          "volume": 1.0,
+          "pitch": [
+            0.95,
+            1.02
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    },
+    "paleo.mob.rex.bite": {
+      "category": "hostile",
+      "sounds": [
+        {
+          "name": "sounds/paleo/mob/rex/bite/rex_bite",
+          "volume": 1.0,
+          "pitch": [
+            0.95,
+            1.05
+          ],
+          "load_on_low_memory": true,
+          "stream": false
+        }
+      ]
+    }
+  }
+}

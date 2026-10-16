@@ -1,0 +1,72 @@
+{
+  "format_version": "1.17.0",
+  "minecraft:spawn_rules": {
+    "description": {
+      "identifier": "paleo:compsognathus",
+      "population_control": "animal"
+    },
+    "conditions": [
+      {
+        "minecraft:spawns_underground": {},
+        "minecraft:spawns_on_block_filter": [
+          "minecraft:stone",
+          "minecraft:granite",
+          "minecraft:diorite",
+          "minecraft:andesite",
+          "minecraft:tuff",
+          "minecraft:deepslate",
+          "minecraft:moss_block",
+          "minecraft:gravel",
+          "paleo:fossil_deposit"
+        ],
+        "minecraft:brightness_filter": {
+          "min": 0,
+          "max": 7,
+          "adjust_for_weather": false
+        },
+        "minecraft:weight": {
+          "default": 6
+        },
+        "minecraft:herd": {
+          "min_size": 2,
+          "max_size": 4
+        },
+        "minecraft:density_limit": {
+          "underground": 4
+        },
+        "minecraft:biome_filter": {
+          "any_of": [
+            { "test": "has_biome_tag", "operator": "==", "value": "lush_caves" },
+            { "test": "has_biome_tag", "operator": "==", "value": "dripstone_caves" },
+            { "test": "has_biome_tag", "operator": "==", "value": "caves" }
+          ]
+        }
+      },
+      {
+        "minecraft:spawns_on_surface": {},
+        "minecraft:brightness_filter": {
+          "min": 7,
+          "max": 15,
+          "adjust_for_weather": false
+        },
+        "minecraft:weight": {
+          "default": 4
+        },
+        "minecraft:herd": {
+          "min_size": 2,
+          "max_size": 3
+        },
+        "minecraft:density_limit": {
+          "surface": 3
+        },
+        "minecraft:biome_filter": {
+          "any_of": [
+            { "test": "has_biome_tag", "operator": "==", "value": "jungle" },
+            { "test": "has_biome_tag", "operator": "==", "value": "bamboo" },
+            { "test": "has_biome_tag", "operator": "==", "value": "savanna" }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:item": {
+    "description": {
+      "identifier": "paleo:excavation_shovel",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:icon": {
+        "textures": {
+          "default": "paleo_excavation_shovel"
+        }
+      },
+      "minecraft:max_stack_size": 1,
+      "minecraft:tags": {
+        "tags": [
+          "paleo:is_excavator",
+          "paleo:is_field_tool",
+          "minecraft:is_tool",
+          "minecraft:is_shovel"
+        ]
+      },
+      "minecraft:durability": {
+        "max_durability": 640,
+        "damage_chance": {
+          "min": 90,
+          "max": 100
+        }
+      },
+      "minecraft:repairable": {
+        "repair_items": [
+          {
+            "items": [
+              "minecraft:iron_ingot"
+            ],
+            "repair_amount": "query.max_durability * 0.25"
+          },
+          {
+            "items": [
+              "paleo:excavation_shovel"
+            ],
+            "repair_amount": "context.other->query.remaining_durability"
+          }
+        ]
+      },
+      "minecraft:enchantable": {
+        "slot": "shovel",
+        "value": 14
+      },
+      "minecraft:damage": 3,
+      "minecraft:hand_equipped": {
+        "value": true
+      },
+      "minecraft:digger": {
+        "destroy_speeds": [
+          {
+            "block": "paleo:fossil_deposit",
+            "speed": 9
+          },
+          {
+            "block": "paleo:shale_matrix",
+            "speed": 9
+          },
+          {
+            "block": "paleo:bone_bed",
+            "speed": 9
+          },
+          {
+            "block": "minecraft:gravel",
+            "speed": 9
+          },
+          {
+            "block": "minecraft:sand",
+            "speed": 9
+          },
+          {
+            "block": "minecraft:dirt",
+            "speed": 9
+          },
+          {
+            "block": "minecraft:clay",
+            "speed": 9
+          },
+          {
+            "block": "minecraft:soul_sand",
+            "speed": 9
+          }
+        ],
+        "use_efficiency": true
+      }
+    }
+  }
+}

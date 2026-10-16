@@ -1,0 +1,60 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "PALEOFRONTIER: Arquivo dos Gigantes [BP]",
+    "description": "Exploracao, arqueologia e ecossistemas pre-historicos. Behavior pack (blocos, itens, entidades, geracao e scripts). Requer o resource pack PALEOFRONTIER [RP].",
+    "uuid": "9a1f3d1d-ef22-4052-8e72-01afee4a75de",
+    "version": [
+      1,
+      0,
+      3
+    ],
+    "min_engine_version": [
+      1,
+      26,
+      50
+    ]
+  },
+  "modules": [
+    {
+      "description": "PALEOFRONTIER content (blocks, items, entities, features, loot, recipes)",
+      "type": "data",
+      "uuid": "19cefacf-0cf9-4ad0-a3ba-c3f1546edc7c",
+      "version": [
+        1,
+        0,
+        3
+      ]
+    },
+    {
+      "description": "PALEOFRONTIER gameplay scripts",
+      "type": "script",
+      "language": "javascript",
+      "uuid": "41f22d2e-2c99-4bad-8689-aa921e6c7fa3",
+      "version": [
+        1,
+        0,
+        3
+      ],
+      "entry": "scripts/main.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.10.0"
+    },
+    {
+      "module_name": "@minecraft/server-ui",
+      "version": "2.2.0"
+    },
+    {
+      "uuid": "714d82a3-b073-4c75-9da3-3de9463ad77c",
+      "version": [
+        1,
+        0,
+        3
+      ]
+    }
+  ]
+}

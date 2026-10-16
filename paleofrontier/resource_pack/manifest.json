@@ -1,0 +1,31 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "PALEOFRONTIER: Arquivo dos Gigantes [RP]",
+    "description": "Recursos visuais e sonoros do PALEOFRONTIER: texturas, modelos, animacoes, sons e traducoes.",
+    "uuid": "714d82a3-b073-4c75-9da3-3de9463ad77c",
+    "version": [
+      1,
+      0,
+      3
+    ],
+    "min_engine_version": [
+      1,
+      26,
+      50
+    ]
+  },
+  "modules": [
+    {
+      "description": "PALEOFRONTIER resources",
+      "type": "resources",
+      "uuid": "61da0acf-e8cd-4640-a2b9-e97a703389f5",
+      "version": [
+        1,
+        0,
+        3
+      ]
+    }
+  ],
+  "dependencies": []
+}
