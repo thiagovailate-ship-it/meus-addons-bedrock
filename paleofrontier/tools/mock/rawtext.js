@@ -59,6 +59,13 @@ export function checkRawMessage(value, where) {
     return;
   }
   if (Array.isArray(withValue)) {
+    // `with: []` nao e resolvivel: quem nao tem argumento deve omitir a chave.
+    if (withValue.length === 0) {
+      throw new TypeError(
+        `${where}: Failed to resolve raw message from json - 'with' e um array vazio; ` +
+          `omita a chave quando nao houver argumentos (translateWith() de core/text.js)`,
+      );
+    }
     if (!withValue.every((entry) => typeof entry === "string")) {
       throw new TypeError(
         `${where}: Native variant type conversion failed - 'with' como array SO aceita ` +
@@ -70,6 +77,28 @@ export function checkRawMessage(value, where) {
   }
   if (typeof withValue !== "object" || withValue === null) {
     throw new TypeError(`${where}: 'with' precisa ser string[] ou RawMessage`);
+  }
+  // Terceiro log real do cliente (Bedrock 1.26.52, iOS):
+  //   [Scripting][error]-[paleo:error] journal_ui.open: Failed to resolve raw
+  //   message from json:
+  //   {"rawtext":[{"translate":"paleo.ui.journal.objective_n","with":{"rawtext":
+  //    [{"text":"1"},{"translate":"paleo.ui.obj.gear","with":{"text":""}}]}}]}
+  // O `with: { text: "" }` interno vinha de args([]) aplicado a um passo de
+  // objetivo sem parametros - 6 dos 7 passos nao tem `args`, entao a tela de
+  // objetivos quebrava para quase todo mundo.  Um `with` presente porem vazio
+  // nao e resolvivel; a chave tem que ser omitida.
+  if (Array.isArray(withValue.rawtext) && withValue.rawtext.length === 0) {
+    throw new TypeError(
+      `${where}: Failed to resolve raw message from json - 'with.rawtext' vazio; ` +
+        `omita a chave quando nao houver argumentos`,
+    );
+  }
+  if (withValue.text === "" && Object.keys(withValue).length === 1) {
+    throw new TypeError(
+      `${where}: Failed to resolve raw message from json - 'with: { text: "" }' nao e ` +
+        `resolvivel pelo cliente; omita a chave quando nao houver argumentos ` +
+        `(translateWith() de core/text.js)`,
+    );
   }
   checkRawMessage(withValue, `${where}.with`);
 }

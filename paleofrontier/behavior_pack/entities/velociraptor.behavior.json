@@ -283,9 +283,13 @@
           ]
         },
         "minecraft:leashable": {
-          "soft_distance": 5.0,
-          "hard_distance": 8.0,
-          "max_distance": 14.0
+          "presets": [
+            {
+              "soft_distance": 5.0,
+              "hard_distance": 8.0,
+              "max_distance": 14.0
+            }
+          ]
         }
       },
       "paleo:raptor_studied": {
@@ -343,9 +347,13 @@
       "minecraft:conditional_bandwidth_optimization": {},
       "minecraft:balloonable": {},
       "minecraft:leashable": {
-        "soft_distance": 5.0,
-        "hard_distance": 8.0,
-        "max_distance": 14.0
+        "presets": [
+          {
+            "soft_distance": 5.0,
+            "hard_distance": 8.0,
+            "max_distance": 14.0
+          }
+        ]
       },
       "minecraft:ambient_sound_interval": {
         "value": 10.0,

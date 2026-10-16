@@ -351,3 +351,48 @@ LEAF_ENUM_FIELDS = {
 # blocos que o tinham viraram "Unknown block during Deferred BlockDescriptor
 # resolution" e sumiram do mundo.
 DEPRECATED_BLOCK_COMPONENTS = frozenset({"minecraft:breathability"})
+
+
+# ---------------------------------------------------------------------------
+# Terceiro log real do cliente (Bedrock 1.26.52, iOS), sobre a v1.0.2:
+#   [Json][error] ... | paleo:tyrannosaurus | minecraft:entity |
+#     component_groups | paleo:rex_imprinted | minecraft:leashable |
+#     hard_distance | child 'hard_distance' not valid here.
+# (idem soft_distance e max_distance, nas 4 entidades - 7 sitios)
+#
+# Causa: desde fv 1.21.80 as distancias do leashable MIGRARAM para dentro de
+# `presets[]`.  O proprio form oficial documenta isso no campo `note2`:
+#   "From 1.21.80 onward, supports multiple presets via the `presets` array.
+#    Each preset has its own `filter`, `hard_distance`, `soft_distance`, and
+#    `max_distance` - replacing the flat root fields previously used."
+# Modelo vanilla na MESMA format_version deste pacote (dolphin.json, fv 1.26.50):
+#   "minecraft:leashable": {
+#     "presets": [{"soft_distance": 4.0, "hard_distance": 6.0, "max_distance": 10.0}],
+#     "unleash_on_removal": false
+#   }
+#
+# Por que o validador deixou passar: tools/vendor_forms.py fundia as tres listas
+# de campos do form sem distinguir proveniencia.  As distancias sobrevivem na
+# lista `fields` (escrita a mao, envelhece) mas NAO existem na lista
+# `generated_doNotEdit` (gerada do schema atual).  Cada campo agora guarda a
+# proveniencia, e campo "so manual" virou aviso.
+# ---------------------------------------------------------------------------
+
+# Campos que migraram para dentro de `presets[]`, por componente, com a versao
+# em que a forma achatada deixou de ser aceite.
+RELOCATED_TO_PRESETS = {
+    "minecraft:leashable": {
+        "since": "1.21.80",
+        "fields": frozenset({"soft_distance", "hard_distance", "max_distance"}),
+    },
+}
+
+# Membros validos DENTRO de `presets[]`, derivados do censo vanilla
+# (boat, chest_boat, camel, camel_husk, dolphin, happy_ghast, nautilus,
+# zombie_horse, zombie_nautilus): filter=10, spring_type=10, hard_distance=7,
+# max_distance=5, rotation_adjustment=4, soft_distance=3.
+PRESET_ITEM_FIELDS = {
+    "minecraft:leashable": frozenset(
+        {"filter", "spring_type", "rotation_adjustment",
+         "soft_distance", "hard_distance", "max_distance"}),
+}

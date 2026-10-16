@@ -16,14 +16,26 @@ criada para que a mesma classe de erro não volte a passar.
 
 ## Camada 0 — teste real no cliente (Bedrock 1.26.52, iOS)
 
-Esta camada tem **dois logs reais**, coletados em duas instalações diferentes do
-add-on. O primeiro (v1.0.0) apontou 9 classes de erro; o segundo (v1.0.1) apontou
-mais 5 classes que estavam **mascaradas** atrás das primeiras. Nenhuma delas era
-detectável pelas camadas 1–4 da forma como estavam: os schemas oficiais da
-Mojang são lenientes nesses pontos, e o mock do harness era menos fiel que o
-cliente. Todas foram corrigidas na fonte (`tools/content_model.py`,
-`tools/gen_bp.py` e `tools/bedrock_names.py`, não nos arquivos gerados) e cada
-uma virou uma checagem permanente.
+Esta camada tem **três logs reais**, coletados em três instalações do add-on no
+mesmo dispositivo (Bedrock 1.26.52, iOS):
+
+| rodada | versão testada | classes de erro novas | classes anteriores |
+|---|---|---|---|
+| 1º log | v1.0.0 | 9 | — |
+| 2º log | v1.0.1 | 5 (mascaradas atrás das 9) | **todas desapareceram** |
+| 3º log | v1.0.2 | 2 | **todas desapareceram** |
+
+Nenhuma delas era detectável pelas camadas 1–4 da forma como estavam: os schemas
+oficiais da Mojang são lenientes nesses pontos, os forms do `minecraft-creator`
+estão desatualizados em relação ao parser, e o mock do harness era menos fiel que
+o cliente. Todas foram corrigidas na fonte (`tools/content_model.py`,
+`tools/gen_bp.py`, `tools/bedrock_names.py`, `tools/vendor_forms.py` e nos scripts
+do pacote, não nos arquivos gerados) e cada uma virou uma checagem permanente.
+
+O padrão das três rodadas é o mesmo: cada log confirma as correções anteriores e
+revela uma camada que estava **escondida atrás** delas — porque o cliente aborta
+no primeiro erro de parse por entidade, e porque um mock infiel faz asserções
+antigas passarem de forma vazia.
 
 ### Primeiro log (v1.0.0 → v1.0.1)
 
@@ -102,6 +114,64 @@ sobrou um par sem referência: `damage_sensor.deals_damage` escrito como
 changed from a Boolean to supporting three values"*. Corrigido para `"no"`.
 O cliente nunca reportaria isso: o compsognathus já abortava antes.
 
+### Terceiro log real (v1.0.2 → v1.0.3)
+
+O mesmo cliente, após importar a v1.0.2 em mundo novo. As 5 classes da rodada
+anterior **desapareceram**: nenhuma reclamação de `breathability`,
+`alert_same_type`, `sound_interval`, `must_see_forget_duration` ou
+`deals_damage`, e nenhum `Unknown block`. Restaram 2 classes:
+
+| # | Erro no log do cliente | Causa raiz | Correção | Regra permanente criada |
+|---|---|---|---|---|
+| 15 | `minecraft:leashable \| hard_distance \| child 'hard_distance' not valid here` (idem `soft_distance`/`max_distance`; 7 sítios nas 4 entidades = 21 linhas) | desde **fv 1.21.80** as distâncias do leashable **migraram para dentro de `presets[]`**. O próprio form oficial documenta isso no `note2`: *"Each preset has its own `filter`, `hard_distance`, `soft_distance`, and `max_distance` — replacing the flat root fields previously used"* | `{soft,hard,max}_distance` → `presets: [{soft,hard,max}_distance]`, com os 7 conjuntos de valores preservados um a um. Modelo vanilla na **mesma** format_version: `dolphin.json` fv 1.26.50 | camada 6: `RELOCATED_TO_PRESETS` (gated por fv) + vocabulário de membros de `presets[]` derivado do vanilla + `presets` precisa ser lista |
+| 16 | `journal_ui.open: Failed to resolve raw message from json` com `{"translate":"paleo.ui.obj.gear","with":{"text":""}}` | `args([])` devolvia `{ text: "" }`. Um `with` **presente porém vazio** não é resolvível. Como 6 dos 7 passos de objetivo não têm `args`, a tela de objetivos quebrava para quase todo mundo | `args([])` → `undefined`; novo `translateWith(chave, valores)`, que **omite** a chave quando não há argumentos | camada 5: `args()` só aceita array literal não-vazio (argumento dinâmico tem que ir por `translateWith`); mock rejeita `with` vazio com a mesma mensagem do cliente |
+
+### A causa-raiz de ferramenta por trás do erro 15
+
+Este é o achado mais importante da rodada, porque explica **por que o validador
+deixou passar** um campo que a própria documentação oficial dizia ter migrado.
+
+Cada `.form.json` do `minecraft-creator` traz a lista de campos em até três
+lugares: `fields` (escrita à mão), `generatedFromSchema_doNotEdit` e
+`generated_doNotEdit` (geradas do schema atual). `tools/vendor_forms.py` fundia as
+três **sem distinguir a origem**, com a intenção declarada de "evitar falso
+positivo de campo que não existe". O efeito foi o oposto: um falso **negativo**.
+
+Para `minecraft:leashable`:
+
+| campo | `fields` (manual) | `generated_doNotEdit` | cliente 1.26.52 |
+|---|---|---|---|
+| `soft_distance` / `hard_distance` / `max_distance` | presente | **ausente** | **rejeita** |
+| `presets` | ausente | presente | aceita |
+
+A lista manual envelhece; a gerada não. A correção foi registrar a
+**proveniência** de cada campo (`manual` / `generated` / `both`) e capturar também
+o `note2` — que era justamente onde a migração estava documentada e que o extrator
+descartava.
+
+Um detalhe de calibração: "campo só na lista manual" **não** pode virar FAIL
+sozinho. Aplicado cruamente produz 34 avisos no próprio pacote, todos em campos
+universais (`health.value`, `movement.value`, `follow_range.max`) que a lista
+gerada apenas representa de outro jeito — ruído que esconde o único sinal
+verdadeiro. O filtro que separa os casos é **o form documentar migração/remoção**:
+dos 400 componentes, 30 têm essa nota e só **4** têm nota *e* campos manuais
+(`ageable`, `breedable`, `leashable`, `tameable`). Com o filtro: 0 avisos no
+pacote, e o `leashable` teria sido sinalizado.
+
+Os forms continuam sem ser prova em nenhuma direção — `alert_same_type` consta no
+`generated_doNotEdit` e o cliente o rejeita. Daí a hierarquia permanecer
+**log real > censo vanilla > forms**.
+
+### Um teste antigo que passava de forma vazia
+
+Ao ensinar o mock a rejeitar `with` vazio, a asserção **já existente** `"objectives
+screen reachable"` (seção `[10]`) passou a falhar com o código antigo. Ou seja: a
+tela de objetivos estava quebrada no jogo e o harness a dava como OK, porque o
+mock aceitava a mensagem inválida. Restaurando `text.js`/`journal_ui.js` do commit
+anterior o harness reprova; com a correção, passa. É o mesmo padrão da seção
+`[11]`: guarda de fidelidade vale mais que asserção de funcionalidade.
+
+### Por que o harness não pegou nada disso
 
 Duas lacunas de fidelidade, ambas corrigidas:
 
@@ -147,8 +217,8 @@ o que não significa que sejam inválidos.
 ### Teste de mutação: as regras têm dentes
 
 Cada regra nova foi validada reinjetando o defeito correspondente numa cópia do
-pacote e confirmando que o pipeline reprova. Foram 6 classes de mutação e **6
-detectadas**:
+pacote e confirmando que o pipeline reprova. Acumulado das três rodadas: **10
+classes de mutação, 10 detectadas**.
 
 | Mutação | Detectada por |
 |---|---|
@@ -158,10 +228,20 @@ detectadas**:
 | `entity_types[1].must_see_forget_duration` reinserido | camada 6 |
 | `damage_sensor.deals_damage` de volta a `{"value": false}` | camada 6 |
 | `minecraft:breathability` reinserido num bloco | camada 4 |
+| `leashable` com as distâncias achatadas no nível de cima (o erro exato do 3º log) | camada 6 |
+| membro inventado (`leash_strength`) dentro de `leashable.presets[]` | camada 6 |
+| `leashable.presets` como objeto em vez de lista | camada 6 — **achada pelo teste**: a primeira versão da regra só iterava quando era lista, e portanto não pegava esta |
+| `args(step.args \|\| [])` (argumento não-literal, possivelmente vazio) | camada 5 |
 
-O bug do journal foi validado do mesmo modo, no harness: restaurando os
-`store.js`/`journal.js` do commit anterior, a seção `[12]` **falha 3 asserções** e
-captura exatamente a classe de erro do cliente; com a correção, passam.
+Dois bugs de script foram validados do mesmo modo, no harness, restaurando os
+arquivos do commit anterior:
+
+- `store.js`/`journal.js` sem o bucket `bonded` → a seção `[12]` **falha 3
+  asserções** e captura exatamente a classe de erro do cliente;
+- `text.js`/`journal_ui.js` com `args([])` → `{text:""}` → a asserção **já
+  existente** `"objectives screen reachable"` falha.
+
+Com as correções, tudo passa.
 
 ### Reprodutibilidade do artefato
 
@@ -269,9 +349,9 @@ do `format_version` em que a regra ficou estrita. Quando `tools/.forms/` está
 vendorado, soma-se a comparação campo a campo com os forms oficiais (avisos).
 Calibrado contra as 128 entidades vanilla — ver Camada 0.
 
-**Resultado das camadas 2 a 6: 1032 verificações, 0 falhas.**
+**Resultado das camadas 2 a 6: 1067 verificações, 0 falhas.**
 
-## Camada 7 — play-through headless (45 asserções)
+## Camada 7 — play-through headless (47 asserções)
 
 `tools/simulate.mjs` sobe os **scripts reais do behavior pack** contra um mock
 fiel da Script API (eventos, dynamic properties, inventários, `getBlocks` sobre
@@ -289,10 +369,10 @@ uma grade real de blocos, relógio controlável) e executa o ciclo completo:
 | 8 | registro/incubadoras/caderno persistem em dynamic properties e são restaurados após "reload" simulado | ok |
 | 9 | duplo toque abre 1 formulário; inventário de outro jogador intocado | ok |
 | 10 | caderno abre pela maleta, tela de objetivos acessível, `/scriptevent paleo:dump` responde | ok |
-| 11 | guardas de fidelidade do mock: rejeita `playerJoin` com `event.player`, rejeita `with` misto, aceita a forma normalizada | ok |
+| 11 | guardas de fidelidade do mock (5): rejeita `playerJoin` com `event.player`, rejeita `with` misto, **rejeita `with` vazio**, aceita `translate` sem `with`, aceita a forma normalizada | ok |
 | 12 | **jogador novo** abre todas as telas do caderno (criaturas + os 4 dossiers) sem erro de script — regressão do segundo log real | ok |
 
-Resultado: **45/45 asserções.**
+Resultado: **47/47 asserções.**
 
 ## Camada 8 — verificação de API contra as type definitions oficiais
 

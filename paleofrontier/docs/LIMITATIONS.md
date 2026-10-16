@@ -4,13 +4,13 @@
 
 ### O que já se sabe do cliente real
 
-**Duas rodadas reais** aconteceram (Bedrock 1.26.52, iOS) e ambas produziram log.
-A primeira (sobre a v1.0.0) apontou 9 classes de erro; a segunda (sobre a v1.0.1)
-apontou 5 classes novas que estavam mascaradas atrás das primeiras. Todas foram
-corrigidas e cada uma virou uma checagem permanente — o detalhe está em
-`docs/TEST_REPORT.md`, Camada 0.
+**Três rodadas reais** aconteceram no mesmo dispositivo (Bedrock 1.26.52, iOS),
+todas com log: a primeira sobre a v1.0.0 apontou 9 classes de erro; a segunda
+sobre a v1.0.1 apontou 5 classes que estavam mascaradas atrás das primeiras; a
+terceira sobre a v1.0.2 apontou 2 classes. Todas foram corrigidas e cada uma virou
+uma checagem permanente — o detalhe está em `docs/TEST_REPORT.md`, Camada 0.
 
-O segundo log **confirmou as correções do primeiro**, porque o cliente continuou
+Cada log **confirmou as correções do anterior**, porque o cliente continuou
 parseando os mesmos arquivos e parou de reclamar deles:
 
 - os 9 erros da primeira rodada **desapareceram** por completo: nenhum erro de
@@ -35,12 +35,19 @@ e passou a ser fato observado.
 
 ### O que ainda NÃO foi re-verificado no cliente
 
-**As 6 correções da v1.0.2 ainda não foram re-testadas em cliente** (as 5 do
-segundo log + `damage_sensor.deals_damage`, achada por varredura). O que existe é:
-evidência dos dois logs, confronto com o conteúdo vanilla 1.26.50.4, com a
-documentação oficial e com as type definitions — mais as checagens permanentes,
-calibradas para não acusar o conteúdo da Mojang e validadas por teste de mutação.
-Um terceiro log é o que fecha o ciclo.
+**As 2 correções da v1.0.3 ainda não foram re-testadas em cliente** (as distâncias
+do `leashable` migradas para `presets[]` e o `with` vazio na tela de objetivos).
+O que existe é: evidência dos três logs, confronto com o conteúdo vanilla
+1.26.50.4, com a documentação oficial e com as type definitions — mais as
+checagens permanentes, calibradas para não acusar o conteúdo da Mojang e
+validadas por 10 mutações reinjetadas. Um quarto log é o que fecha o ciclo.
+
+Vale registrar o que o terceiro log confirmou: as 5 classes da v1.0.2
+**desapareceram** por completo (nenhum erro de `breathability`,
+`alert_same_type`, `sound_interval`, `must_see_forget_duration`, `deals_damage`
+e nenhum `Unknown block`), e o diário abriu — o erro de script mudou de natureza,
+de "bucket ausente" para "mensagem não resolvível", ou seja, a tela passou a
+renderizar e só falhou na formatação de uma linha.
 
 Risco residual honesto: 13 pares `(componente, campo)` usados pelas entidades não
 têm correspondência no vanilla dos samples (`melee_attack.track_target`,
@@ -53,7 +60,7 @@ neles seria trocar um risco conhecido por um desconhecido.
 
 | Item | Por que não foi testado | Mitigação aplicada |
 |---|---|---|
-| Ausência de erros no log após as correções da v1.0.2 | exige nova rodada no cliente | 1032 verificações + 45 asserções; regras calibradas contra as 128 entidades vanilla (0 falso positivo) e validadas por 6 mutações reinjetadas |
+| Ausência de erros no log após as correções da v1.0.3 | exige nova rodada no cliente | 1067 verificações + 47 asserções; regras calibradas contra as 128 entidades vanilla (0 falso positivo) e validadas por 10 mutações reinjetadas |
 | Renderização final de modelos/texturas/partículas | exige o cliente | geometria conferida contra o formato oficial e renderizada offline por `tools/preview_model.py`; UVs gerados por packer sem sobreposição |
 | Distribuição real dos depósitos em seeds | geração ocorre no motor, em mundo novo | feature rules no formato oficial (`ore_feature` + `feature_rules`), mesmos padrões dos samples da Mojang (`custom_features/basic_orange_ore`, `casual_creator/gray_wave`) |
 | Blocos aparecendo no mundo após o fim do erro `Unknown block` | exige mundo novo no cliente | `breathability` removido (era o que impedia o registro); o default oficial já é `"solid"`, então a remoção não altera comportamento |

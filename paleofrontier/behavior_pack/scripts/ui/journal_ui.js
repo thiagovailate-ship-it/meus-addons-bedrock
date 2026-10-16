@@ -7,7 +7,7 @@ import { SPECIES } from "../data/content.js";
 import * as journal from "../systems/journal.js";
 import * as creatures from "../systems/creatures.js";
 import * as ui from "./forms.js";
-import { args } from "../core/text.js";
+import { args, translateWith } from "../core/text.js";
 
 const BACK = -1;
 
@@ -85,7 +85,13 @@ async function objectivesMenu(player) {
     form.label({ translate: "paleo.ui.journal.complete" });
   }
   steps.forEach((step, index) => {
-    form.label({ translate: "paleo.ui.journal.objective_n", with: args([index + 1, { translate: step.key, with: args(step.args || []) }])});
+    // `step.args` so existe em alguns passos (ex.: paleo.ui.obj.all).  Nos demais
+    // o `with` interno tem que ser OMITIDO - um `with` vazio faz o cliente
+    // falhar com "Failed to resolve raw message from json" e derruba a tela.
+    form.label({
+      translate: "paleo.ui.journal.objective_n",
+      with: args([index + 1, translateWith(step.key, step.args)]),
+    });
   });
   form.button({ translate: "paleo.ui.lab.cancel" });
   await showMenu(player, form, [null]);

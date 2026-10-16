@@ -21,7 +21,7 @@ Addon completo de exploração, arqueologia e ecossistemas pré-históricos para
 |---|---|
 | [`docs/INSTALL.md`](docs/INSTALL.md) | importação, ativação, primeiro ciclo |
 | [`docs/DESIGN.md`](docs/DESIGN.md) | arquitetura, sistemas, persistência, multiplayer |
-| [`docs/TEST_REPORT.md`](docs/TEST_REPORT.md) | 1032 verificações + 45 asserções headless + **duas** rodadas reais no cliente 1.26.52 |
+| [`docs/TEST_REPORT.md`](docs/TEST_REPORT.md) | 1067 verificações + 47 asserções headless + **três** rodadas reais no cliente 1.26.52 |
 | [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) | o que não pôde ser testado e por quê |
 
 ## Desenvolvimento
@@ -36,7 +36,7 @@ os JSON/PNG/OGG/JS e `tools/validate.py` prova a consistência em 6 camadas
 do cliente, fidelidade da Script API e componentes de entidade por versão),
 quando vendadas com `tools/fetch_schemas.sh`.
 
-Algumas ferramentas existem por causa dos **dois testes reais no cliente**
+Algumas ferramentas existem por causa dos **três testes reais no cliente**
 (Bedrock 1.26.52, iOS) — ver [`docs/TEST_REPORT.md`](docs/TEST_REPORT.md),
 Camada 0:
 

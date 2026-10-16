@@ -319,9 +319,13 @@
           "value": 2
         },
         "minecraft:leashable": {
-          "soft_distance": 8.0,
-          "hard_distance": 12.0,
-          "max_distance": 20.0
+          "presets": [
+            {
+              "soft_distance": 8.0,
+              "hard_distance": 12.0,
+              "max_distance": 20.0
+            }
+          ]
         }
       },
       "paleo:rex_studied": {

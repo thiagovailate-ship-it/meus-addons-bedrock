@@ -64,27 +64,44 @@ def extract(forms_dir):
         # Fundir as tres evita falso positivo de "campo nao existe".
         legacy = doc.get("generated_doNotEdit") or {}
         fields = {}
-        sources = [
-            doc.get("fields") or [],
-            gen.get("fields") or [],
-            legacy.get("fields") or [],
+        # PROVENIENCIA importa.  As listas `generated*_doNotEdit` sao geradas a
+        # partir do schema atual; a lista `fields` do topo e escrita a mao e
+        # ENVELHECE.  Fundir tudo sem distinguir - que era o que este script
+        # fazia - produz falso NEGATIVO: `minecraft:leashable` lista
+        # soft/hard/max_distance no topo, campos que o form gerado ja nao tem
+        # (migraram para `presets[]` em fv 1.21.80) e que o cliente 1.26.52
+        # rejeita com "child not valid here".
+        # Por isso cada campo guarda de onde veio, e o checker trata campo
+        # "so manual" como aviso, nunca como aceite silencioso.
+        grouped = [
+            ("manual", doc.get("fields") or []),
+            ("generated", (gen.get("fields") or []) + (legacy.get("fields") or [])),
         ]
-        for field in [f for src in sources for f in src]:
-            name = field.get("id")
-            if not name:
-                continue
-            entry = fields.get(name) or {}
-            if field.get("dataType"):
-                entry.setdefault("type", field["dataType"])
-            if field.get("choices"):
-                entry["choices"] = [c.get("id") for c in field["choices"]]
-            if field.get("isRequired"):
-                entry["required"] = True
-            fields[name] = entry
+        for source, src_fields in grouped:
+            for field in src_fields:
+                name = field.get("id")
+                if not name:
+                    continue
+                entry = fields.get(name) or {}
+                seen = entry.get("source")
+                entry["source"] = "both" if seen and seen != source else source
+                if field.get("dataType"):
+                    entry.setdefault("type", field["dataType"])
+                if field.get("choices"):
+                    entry["choices"] = [c.get("id") for c in field["choices"]]
+                if field.get("isRequired"):
+                    entry["required"] = True
+                fields[name] = entry
         record = {"fields": fields}
-        note = doc.get("note") or gen.get("note")
-        if note and NOTE_RE.search(note):
-            record["note"] = note[:400]
+        # `note` E `note2`: foi o note2 do minecraft_leashable que documentou a
+        # migracao ("From 1.21.80 onward, supports multiple presets via the
+        # `presets` array ... replacing the flat root fields previously used").
+        notes = [n for n in (doc.get("note"), doc.get("note2"),
+                             gen.get("note"), gen.get("note2")) if n]
+        for note in notes:
+            if NOTE_RE.search(note):
+                record.setdefault("note", "")
+                record["note"] = (record["note"] + " | " + note)[:600].strip(" |")
         out[ident] = record
     return out, skipped
 

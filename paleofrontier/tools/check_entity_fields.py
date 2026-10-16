@@ -184,6 +184,47 @@ def check_doc(doc, rel, forms):
                         f"broadcast_anger_on_being_attacked + broadcast_targets (padrao piglin)"
                     )
 
+            # ---- FAIL: campos que migraram para dentro de presets[] --------
+            # leashable.soft/hard/max_distance sao achatados ate fv 1.21.80; a
+            # partir dali vivem em `presets[]` e o cliente responde
+            # "child 'X' not valid here".  As 4 entidades deste pacote estao em
+            # fv 1.26.50, entao a regra se aplica.
+            relocated = bn.RELOCATED_TO_PRESETS.get(comp)
+            if relocated and bn.version_at_least(fv, relocated["since"]):
+                flat = sorted(set(body) & set(relocated["fields"]))
+                if flat:
+                    fails.append(
+                        f"{rel} {ident} {label}: '{comp}' tem {flat} no nivel de cima, mas "
+                        f"desde fv {relocated['since']} esses campos vivem dentro de "
+                        f"'presets[]' (o cliente responde \"child not valid here\"); "
+                        f"modelo vanilla na mesma fv: dolphin.json"
+                    )
+
+            # ---- FAIL: membros dentro de presets[] ------------------------
+            allowed_preset = bn.PRESET_ITEM_FIELDS.get(comp)
+            if allowed_preset is not None and "presets" in body:
+                presets = body.get("presets")
+                if not isinstance(presets, list):
+                    fails.append(
+                        f"{rel} {ident} {label}: '{comp}.presets' precisa ser uma LISTA de "
+                        f"presets (encontrado {type(presets).__name__}); o vanilla usa "
+                        f'"presets": [{{...}}]'
+                    )
+                else:
+                    for index, preset in enumerate(presets):
+                        if not isinstance(preset, dict):
+                            fails.append(
+                                f"{rel} {ident} {label}: '{comp}.presets[{index}]' precisa ser "
+                                f"um objeto"
+                            )
+                            continue
+                        extra = sorted(set(preset) - set(allowed_preset))
+                        if extra:
+                            fails.append(
+                                f"{rel} {ident} {label}: '{comp}.presets[{index}]' tem membros "
+                                f"{extra} fora do vocabulario vanilla {sorted(allowed_preset)}"
+                            )
+
             # ---- FAIL: regras de profundidade (entity_types, objetos, enums)
             deep = []
             walk_component_body(comp, body, "", deep)
@@ -209,11 +250,25 @@ def check_doc(doc, rel, forms):
             declared = spec.get("fields") or {}
             if not declared:
                 continue
+            # So vale desconfiar da lista manual quando o proprio form documenta
+            # uma migracao/remocao.  Sem esse filtro o aviso dispara em campos
+            # universais (`health.value`, `movement.value`, `follow_range.max`),
+            # que a lista gerada apenas representa de outro jeito: 34 avisos de
+            # ruido escondendo o unico sinal verdadeiro.  Com o filtro, sobram os
+            # 4 componentes que tem nota de migracao E campos so-manuais
+            # (ageable, breedable, leashable, tameable).
+            stale_suspect = bool(spec.get("note"))
             for field, value in body.items():
                 info = declared.get(field)
                 if info is None:
                     warns.append(f"{rel} {ident} {label}: '{comp}.{field}' nao consta no form oficial")
                     continue
+                if stale_suspect and info.get("source") == "manual":
+                    warns.append(
+                        f"{rel} {ident} {label}: '{comp}.{field}' consta SO na lista manual do "
+                        f"form (ausente da lista gerada do schema atual) e o form documenta "
+                        f"migracao/remocao: {spec['note'][:180]}"
+                    )
                 ok, why = kind_ok(info.get("type"), value)
                 if not ok:
                     warns.append(f"{rel} {ident} {label}: '{comp}.{field}' {why}")

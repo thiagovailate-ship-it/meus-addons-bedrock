@@ -768,6 +768,8 @@ def check_script_api_fidelity():
       tela inteira.  Todo `with:` precisa passar por args() de core/text.js.
     - `PlayerJoinAfterEvent` so expoe playerId/playerName; ler `event.player`
       devolve undefined e estoura dentro do handler.
+    - `with` presente porem VAZIO nao e resolvivel pelo cliente ("Failed to
+      resolve raw message from json"): quem nao tem argumento omite a chave.
     """
     scripts_root = os.path.join(BP, "scripts")
     text_helper = os.path.join(scripts_root, "core", "text.js")
@@ -778,6 +780,10 @@ def check_script_api_fidelity():
     helper_src = open(text_helper, encoding="utf-8").read()
     if "export function args(" not in helper_src:
         fail("core/text.js precisa exportar args()")
+    ok()
+    if "export function translateWith(" not in helper_src:
+        fail("core/text.js precisa exportar translateWith() - e o que permite omitir "
+             "'with' quando a lista de argumentos vem vazia")
     ok()
 
     for path in walk(scripts_root, [".js"]):
@@ -791,6 +797,26 @@ def check_script_api_fidelity():
                 line = text[:match.start()].count("\n") + 1
                 fail(f"{rel(path)}:{line}: 'with:' sem args() - a API declara "
                      f"with?: string[] | RawMessage; array misto quebra no cliente")
+            ok()
+        # args() precisa receber um array LITERAL nao-vazio.  Terceiro log real
+        # do cliente (1.26.52, iOS):
+        #   journal_ui.open: Failed to resolve raw message from json
+        #   {...{"translate":"paleo.ui.obj.gear","with":{"text":""}}}
+        # Vinha de `args(step.args || [])` num passo de objetivo sem parametros:
+        # args([]) devolvia `{ text: "" }` e um `with` presente porem vazio nao e
+        # resolvivel.  6 dos 7 passos nao tem args, entao a tela de objetivos
+        # quebrava para quase todo mundo.  Argumento dinamico (possivelmente
+        # vazio) tem que ir por translateWith(), que omite a chave.
+        for match in re.finditer(r"\bargs\(", text):
+            rest = text[match.end():match.end() + 40].lstrip()
+            line = text[:match.start()].count("\n") + 1
+            if not rest.startswith("["):
+                fail(f"{rel(path)}:{line}: args() com argumento nao-literal - se a lista "
+                     f"puder vir vazia o cliente falha com 'Failed to resolve raw message "
+                     f"from json'; use translateWith(chave, valores)")
+            elif rest.startswith("[]") or rest.startswith("[ ]"):
+                fail(f"{rel(path)}:{line}: args([]) vazio - um 'with' vazio nao e resolvivel "
+                     f"pelo cliente; omita a chave com translateWith()")
             ok()
         if re.search(r"playerJoin[\s\S]{0,220}?event\.player\b(?!Id)", text):
             fail(f"{rel(path)}: handler de playerJoin lendo 'event.player' - "

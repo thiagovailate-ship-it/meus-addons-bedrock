@@ -338,6 +338,24 @@ check(
   ),
 );
 check(
+  "mock rejeita RawMessage com 'with' vazio ({text:\"\"} de args([]))",
+  throwsWith(
+    () => alice.sendMessage({ translate: "paleo.ui.obj.gear", with: { text: "" } }),
+    "Failed to resolve raw message from json",
+  ),
+);
+check(
+  "mock aceita translate SEM 'with' quando nao ha argumentos",
+  (() => {
+    try {
+      alice.sendMessage({ translate: "paleo.ui.obj.gear" });
+      return true;
+    } catch (err) {
+      return false;
+    }
+  })(),
+);
+check(
   "mock aceita a forma normalizada por core/text.js",
   (() => {
     try {
