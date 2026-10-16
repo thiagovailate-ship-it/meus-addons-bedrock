@@ -163,6 +163,23 @@ def check_manifests():
     if not any(d["uuid"] == rp_uuid for d in deps):
         fail("BP manifest does not depend on the RP header uuid")
     ok()
+    # Dependencia por UUID casa a versao EXATA: se o RP for bumpado sem bumpar a
+    # dependencia no BP, ela deixa de resolver e o BP nao ativa - sem erro obvio
+    # no log.  Por isso a versao da dependencia tem que ser a do header do RP.
+    for dep in deps:
+        if dep["uuid"] == rp_uuid and dep.get("version") != rp["header"]["version"]:
+            fail(f"BP depende do RP na versao {dep.get('version')}, mas o header do RP "
+                 f"esta em {rp['header']['version']}: a dependencia nao resolve e o BP "
+                 f"nao ativa")
+        ok()
+    # Modules costumam acompanhar o header; divergencia aqui e quase sempre
+    # esquecimento de bump e faz o cliente manter o pacote antigo em cache.
+    for manifest, tag in ((bp, "BP"), (rp, "RP")):
+        for module in manifest["modules"]:
+            if module["version"] != manifest["header"]["version"]:
+                warn(f"{tag}: modulo '{module['type']}' na versao {module['version']} "
+                     f"diverge do header {manifest['header']['version']}")
+            ok()
     mods = {m["module_name"]: m["version"] for m in bp.get("dependencies", []) if "module_name" in m}
     if mods.get("@minecraft/server") != "2.10.0":
         fail("BP must depend on @minecraft/server 2.10.0 (stable for 1.26.52)")
