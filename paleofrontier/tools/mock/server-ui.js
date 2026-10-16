@@ -6,6 +6,8 @@
  * Every form shown is recorded so tests can assert on what the player saw.
  */
 
+import { checkRawMessage } from "./rawtext.js";
+
 export const shownForms = [];
 let responder = () => -1;
 
@@ -22,18 +24,22 @@ class BaseForm {
     this.labels = [];
   }
   title(text) {
+    checkRawMessage(text, `${this.kind}.title`);
     this.titleText = text;
     return this;
   }
   body(text) {
+    checkRawMessage(text, `${this.kind}.body`);
     this.bodyText = text;
     return this;
   }
   label(text) {
+    checkRawMessage(text, `${this.kind}.label`);
     this.labels.push(text);
     return this;
   }
   button(text) {
+    checkRawMessage(text, `${this.kind}.button`);
     this.buttons.push(text);
     return this;
   }

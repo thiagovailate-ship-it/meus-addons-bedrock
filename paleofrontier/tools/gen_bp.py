@@ -28,13 +28,27 @@ def write(rel, data):
 # ---------------------------------------------------------------------------
 # Blocks
 # ---------------------------------------------------------------------------
+def menu_category(category, group=None):
+    """Creative-inventory placement.
+
+    Since format version 1.26.20 the game validates this strictly: `category`
+    is required and `group`, when present, must be a namespaced string
+    ("minecraft:itemGroup.name.ore").  An unprefixed group makes the whole
+    block definition fail to load, so normalise defensively here.
+    """
+    out = {"category": category}
+    if group:
+        out["group"] = group if ":" in group else f"minecraft:{group}"
+    return out
+
+
 def deposit_block(b):
     return {
         "format_version": cm.FORMAT_BLOCK,
         "minecraft:block": {
             "description": {
                 "identifier": cm.item_id(b["id"]),
-                "menu_category": {"category": b["category"], "group": b["group"]},
+                "menu_category": menu_category(b["category"], b.get("group")),
             },
             "components": {
                 "minecraft:collision_box": True,
@@ -91,7 +105,7 @@ def research_bench_block(b):
         "minecraft:block": {
             "description": {
                 "identifier": cm.item_id(b["id"]),
-                "menu_category": {"category": b["category"]},
+                "menu_category": menu_category(b["category"], b.get("group")),
                 "traits": {
                     "minecraft:placement_direction": {
                         "enabled_states": ["minecraft:cardinal_direction"]
@@ -149,7 +163,7 @@ def incubator_block(b):
         "minecraft:block": {
             "description": {
                 "identifier": cm.item_id(b["id"]),
-                "menu_category": {"category": b["category"]},
+                "menu_category": menu_category(b["category"], b.get("group")),
                 "states": {stage_state: b["states"]["stage"]},
             },
             "components": components,
@@ -184,7 +198,7 @@ def item_json(it):
     identifier = cm.item_id(it["id"])
     description = {
         "identifier": identifier,
-        "menu_category": {"category": it["category"]},
+        "menu_category": menu_category(it["category"], it.get("group")),
     }
     components = {
         "minecraft:icon": {"textures": {"default": f"paleo_{it['id']}"}},
@@ -243,7 +257,7 @@ def item_json(it):
         # Deliberately NO minecraft:entity_placer and NO use action: a viable egg
         # can only be developed inside an incubator, it cannot be thrown straight
         # into the world. The incubator UI consumes it from the player inventory.
-        components["minecraft:fire_resistant"] = True
+        components["minecraft:fire_resistant"] = {"value": True}
     return {
         "format_version": cm.FORMAT_ITEM,
         "minecraft:item": {"description": description, "components": components},
@@ -267,6 +281,7 @@ def gen_recipes():
                 "tags": r["tags"],
                 "pattern": r["pattern"],
                 "key": {k: {"item": v} for k, v in r["key"].items()},
+                "unlock": r["unlock"],
                 "result": {"item": r["result"], "count": r["count"]},
             },
         }))

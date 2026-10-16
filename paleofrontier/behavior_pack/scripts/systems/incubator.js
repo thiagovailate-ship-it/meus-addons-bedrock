@@ -25,6 +25,7 @@ import * as store from "../core/store.js";
 import * as inv from "../core/inventory.js";
 import * as log from "../core/log.js";
 import { nowMs } from "../core/scheduler.js";
+import { args } from "../core/text.js";
 
 /** Never credit more than 5s of progress per tick burst, so time spent away
  *  from an unloaded chamber does not teleport incubation forward. */
@@ -157,7 +158,7 @@ function hatch(entry, block) {
       store.bumpJournal(player, "hatched", species.key, 1);
       player.onScreenDisplay.setTitle({
         translate: "paleo.ui.incubator.hatched",
-        with: [{ translate: `entity.paleo:${species.entity}.name` }],
+        with: args([{ translate: `entity.paleo:${species.entity}.name` }]),
       });
       player.playSound(SOUNDS.incubatorHatch);
     }

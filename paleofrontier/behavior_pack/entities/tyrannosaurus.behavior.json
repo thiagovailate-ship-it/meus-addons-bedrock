@@ -100,7 +100,10 @@
           "reselect_targets": true,
           "scan_interval": 16,
           "within_radius": 26,
-          "attack_interval": 20,
+          "attack_interval": {
+            "min": 20,
+            "max": 20
+          },
           "target_search_height": 6,
           "entity_types": [
             {
@@ -176,7 +179,10 @@
           "reselect_targets": true,
           "scan_interval": 18,
           "within_radius": 24,
-          "attack_interval": 24,
+          "attack_interval": {
+            "min": 24,
+            "max": 24
+          },
           "entity_types": [
             {
               "filters": {
@@ -374,10 +380,6 @@
         "max": 48
       },
       "minecraft:physics": {},
-      "minecraft:pushable": {
-        "is_pushable": false,
-        "is_pushable_by_piston": false
-      },
       "minecraft:conditional_bandwidth_optimization": {},
       "minecraft:break_blocks": {
         "breakable_blocks": [

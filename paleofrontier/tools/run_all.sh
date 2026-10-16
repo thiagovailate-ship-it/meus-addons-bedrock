@@ -12,9 +12,9 @@ else PY=python3
 fi
 echo "== python: $PY"
 
-# schemas oficiais (opcional; habilita a camada 1 da validacao)
-if [ ! -d tools/.schemas/schemas ]; then
-  sh tools/fetch_schemas.sh || echo "WARN: schemas oficiais indisponiveis; camada 1 pulada"
+# schemas oficiais + forms de componentes (opcionais; habilitam as camadas 1 e 6)
+if [ ! -d tools/.schemas/schemas ] || [ ! -f tools/.forms/entity_fields.json ]; then
+  sh tools/fetch_schemas.sh || echo "WARN: referencias oficiais indisponiveis; camadas 1/6 reduzidas"
 fi
 
 $PY tools/gen_bp.py

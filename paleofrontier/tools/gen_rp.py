@@ -13,6 +13,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import bedrock_names as bn  # noqa: E402
 import content_model as cm  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -79,6 +80,21 @@ def gen_atlases():
 # ---------------------------------------------------------------------------
 # Sounds
 # ---------------------------------------------------------------------------
+def checked_sound_event(key, allowed):
+    """Resolve um nome de evento do content_model e exige que o cliente o aceite.
+
+    O cliente rejeita eventos fora da enum LevelSoundEvent (ex.: 'power_on' em
+    vez de 'power.on'), entao falhar aqui e melhor que falhar no jogo.
+    """
+    out = bn.sound_event_key(key)
+    if out not in allowed:
+        raise SystemExit(
+            f"[gen_rp] evento de som desconhecido: {key!r} -> {out!r}\n"
+            f"         nomes validos (derivados dos samples vanilla): {sorted(allowed)}"
+        )
+    return out
+
+
 def gen_sounds_json():
     data = {
         "block_sounds": {},
@@ -90,7 +106,7 @@ def gen_sounds_json():
     for name, group in cm.BLOCK_SOUND_GROUPS.items():
         events = {}
         for key, val in group["events"].items():
-            out_key = "break" if key == "break" else key
+            out_key = checked_sound_event(key, allowed=bn.BLOCK_SOUND_EVENTS)
             if isinstance(val, dict):
                 events[out_key] = val
             else:
@@ -104,7 +120,10 @@ def gen_sounds_json():
         data["entity_sounds"]["entities"][f"{cm.NAMESPACE}:{entity}"] = {
             "volume": spec["volume"],
             "pitch": spec["pitch"],
-            "events": spec["events"],
+            "events": {
+                checked_sound_event(k, allowed=bn.ENTITY_SOUND_EVENTS): v
+                for k, v in spec["events"].items()
+            },
         }
     write("sounds.json", data)
 

@@ -7,6 +7,7 @@ import { SPECIES } from "../data/content.js";
 import * as journal from "../systems/journal.js";
 import * as creatures from "../systems/creatures.js";
 import * as ui from "./forms.js";
+import { args } from "../core/text.js";
 
 const BACK = -1;
 
@@ -55,10 +56,10 @@ async function speciesMenu(player) {
   for (const species of SPECIES) {
     form.button({
       translate: "paleo.ui.journal.species_entry",
-      with: [
+      with: args([
         { translate: `entity.paleo:${species.entity}.name` },
         journal.specimenFound(player, species.key),
-      ],
+      ]),
     });
     handlers.push(() => dossier(player, species.key));
   }
@@ -84,7 +85,7 @@ async function objectivesMenu(player) {
     form.label({ translate: "paleo.ui.journal.complete" });
   }
   steps.forEach((step, index) => {
-    form.label({ translate: "paleo.ui.journal.objective_n", with: [index + 1, { translate: step.key, with: step.args || [] }] });
+    form.label({ translate: "paleo.ui.journal.objective_n", with: args([index + 1, { translate: step.key, with: args(step.args || []) }])});
   });
   form.button({ translate: "paleo.ui.lab.cancel" });
   await showMenu(player, form, [null]);
@@ -104,12 +105,12 @@ async function creaturesMenu(player) {
     any = true;
     form.label({
       translate: "paleo.ui.journal.creature_line",
-      with: [
+      with: args([
         { translate: `entity.paleo:${species.entity}.name` },
         hatched,
         bonded,
         studied,
-      ],
+      ]),
     });
   }
   if (!any) {

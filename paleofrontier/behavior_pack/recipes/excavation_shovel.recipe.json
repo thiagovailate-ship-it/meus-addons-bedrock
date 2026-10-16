@@ -5,7 +5,7 @@
       "identifier": "paleo:excavation_shovel"
     },
     "tags": [
-      "paleo_field_gear"
+      "crafting_table"
     ],
     "pattern": [
       "BIB",
@@ -22,6 +22,9 @@
       "S": {
         "item": "minecraft:stick"
       }
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     },
     "result": {
       "item": "paleo:excavation_shovel",

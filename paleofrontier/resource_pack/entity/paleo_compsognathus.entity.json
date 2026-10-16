@@ -23,19 +23,18 @@
         "attack": "animation.paleo_compsognathus.attack",
         "eat": "animation.paleo_compsognathus.eat",
         "rest": "animation.paleo_compsognathus.rest",
-        "roar": "animation.paleo_compsognathus.roar"
+        "roar": "animation.paleo_compsognathus.roar",
+        "paleo_move": "controller.animation.paleo_compsognathus"
       },
       "scripts": {
         "pre_animation": [
           "variable.paleo_speed = query.modified_move_speed;"
         ],
+        "animate": [
+          "paleo_move"
+        ],
         "scale": "1.0"
       },
-      "animation_controllers": [
-        {
-          "paleo_move": "controller.animation.paleo_compsognathus"
-        }
-      ],
       "render_controllers": [
         "controller.render.paleo_compsognathus"
       ],

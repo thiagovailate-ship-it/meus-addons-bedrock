@@ -7,12 +7,58 @@
  * and getBlocks() really scans a block grid.
  */
 
+import { checkRawMessage } from "./rawtext.js";
+
 let tick = 0;
 const intervals = new Map();
 let nextRunId = 1;
 
+/**
+ * Propriedades reais de cada evento, copiadas de @minecraft/server 2.10.0
+ * (index.d.ts).  Servem para o mock REJEITAR um evento com forma inventada:
+ * um harness que dispara `{ player }` em playerJoin passa verde aqui e quebra
+ * no cliente, porque PlayerJoinAfterEvent so expoe playerId/playerName.
+ */
+export const EVENT_SHAPES = {
+  worldLoad: [],
+  playerJoin: ["playerId", "playerName"],
+  playerLeave: ["playerId", "playerName"],
+  itemUse: ["source", "itemStack"],
+  playerInteractWithBlock: [
+    "player",
+    "block",
+    "blockFace",
+    "faceLocation",
+    "isFirstEvent",
+    "itemStack",
+    "beforeItemStack",
+  ],
+  playerBreakBlock: [
+    "block",
+    "dimension",
+    "brokenBlockPermutation",
+    "player",
+    "itemStackAfterBreak",
+    "itemStackBeforeBreak",
+  ],
+  entitySpawn: ["entity", "cause"],
+  entityDie: ["deadEntity", "damageSource"],
+  entityTamed: ["entity", "tamingEntity"],
+  scriptEventReceive: [
+    "id",
+    "message",
+    "sourceType",
+    "initiator",
+    "sourceBlock",
+    "sourceEntity",
+  ],
+  shutdown: [],
+};
+
 class Signal {
-  constructor() {
+  constructor(name, allowedKeys) {
+    this.name = name;
+    this.allowedKeys = allowedKeys;
     this.handlers = [];
   }
   subscribe(fn) {
@@ -23,6 +69,18 @@ class Signal {
     this.handlers = this.handlers.filter((h) => h !== fn);
   }
   fire(event) {
+    if (this.allowedKeys && event && typeof event === "object") {
+      for (const key of Object.keys(event)) {
+        if (!this.allowedKeys.includes(key)) {
+          throw new TypeError(
+            `[mock] evento '${this.name}' recebeu a propriedade '${key}', que NAO existe ` +
+              `na API oficial (@minecraft/server). Propriedades reais: ` +
+              `[${this.allowedKeys.join(", ")}]. Um teste que dispara uma forma de evento ` +
+              `inventada passa verde aqui e falha no cliente.`,
+          );
+        }
+      }
+    }
     for (const handler of [...this.handlers]) {
       handler(event);
     }
@@ -199,12 +257,15 @@ export class ScreenDisplay {
     this.subtitles = [];
   }
   setActionBar(text) {
+    checkRawMessage(text, "onScreenDisplay.setActionBar");
     this.actionBar.push(text);
   }
   setTitle(text) {
+    checkRawMessage(text, "onScreenDisplay.setTitle");
     this.titles.push(text);
   }
   updateSubtitle(text) {
+    checkRawMessage(text, "onScreenDisplay.updateSubtitle");
     this.subtitles.push(text);
   }
 }
@@ -229,6 +290,7 @@ export class Player extends Entity {
     return undefined;
   }
   sendMessage(text) {
+    checkRawMessage(text, "player.sendMessage");
     this.messages.push(text);
   }
   playSound(id) {
@@ -369,22 +431,37 @@ export const world = {
   players: new Map(),
   properties: new Map(),
   afterEvents: {
-    worldLoad: new Signal(),
-    playerJoin: new Signal(),
-    playerLeave: new Signal(),
-    itemUse: new Signal(),
-    playerInteractWithBlock: new Signal(),
-    playerBreakBlock: new Signal(),
-    entitySpawn: new Signal(),
-    entityDie: new Signal(),
-    entityTamed: new Signal(),
+    worldLoad: new Signal("worldLoad", EVENT_SHAPES.worldLoad),
+    playerJoin: new Signal("playerJoin", EVENT_SHAPES.playerJoin),
+    playerLeave: new Signal("playerLeave", EVENT_SHAPES.playerLeave),
+    itemUse: new Signal("itemUse", EVENT_SHAPES.itemUse),
+    playerInteractWithBlock: new Signal(
+      "playerInteractWithBlock",
+      EVENT_SHAPES.playerInteractWithBlock,
+    ),
+    playerBreakBlock: new Signal("playerBreakBlock", EVENT_SHAPES.playerBreakBlock),
+    entitySpawn: new Signal("entitySpawn", EVENT_SHAPES.entitySpawn),
+    entityDie: new Signal("entityDie", EVENT_SHAPES.entityDie),
+    entityTamed: new Signal("entityTamed", EVENT_SHAPES.entityTamed),
   },
   beforeEvents: {
-    playerBreakBlock: new Signal(),
-    shutdown: new Signal(),
+    playerBreakBlock: new Signal("before.playerBreakBlock", EVENT_SHAPES.playerBreakBlock),
+    shutdown: new Signal("shutdown", EVENT_SHAPES.shutdown),
   },
   getDimension(id) {
     return this.dimensions.get(id);
+  },
+  /** world.getEntity(id) -> Entity | undefined (World, index.d.ts:22604). */
+  getEntity(id) {
+    if (this.players.has(id)) {
+      return this.players.get(id);
+    }
+    for (const dimension of this.dimensions.values()) {
+      if (dimension.entities && dimension.entities.has(id)) {
+        return dimension.entities.get(id);
+      }
+    }
+    return undefined;
   },
   getAllPlayers() {
     return [...this.players.values()];
@@ -424,11 +501,22 @@ export const system = {
     intervals.set(id, { fn, interval: 0, next: tick + delay, once: true });
     return id;
   },
+  /**
+   * system.run(fn) executa no COMECO do proximo tick (System, index.d.ts:21580).
+   * Nao e sincrono: o harness precisa avancar o relogio para observa-lo, exatamente
+   * como no cliente.  Implementar como execucao imediata esconderia bugs de
+   * ordenacao.
+   */
+  run(fn) {
+    return this.runTimeout(fn, 0);
+  },
   clearRun(id) {
     intervals.delete(id);
   },
-  beforeEvents: { shutdown: new Signal() },
-  afterEvents: { scriptEventReceive: new Signal() },
+  beforeEvents: { shutdown: new Signal("shutdown", EVENT_SHAPES.shutdown) },
+  afterEvents: {
+    scriptEventReceive: new Signal("scriptEventReceive", EVENT_SHAPES.scriptEventReceive),
+  },
 };
 
 /** Advances the mock clock, firing due intervals like the game would. */

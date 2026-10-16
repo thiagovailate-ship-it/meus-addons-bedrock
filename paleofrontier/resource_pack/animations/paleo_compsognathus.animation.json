@@ -160,7 +160,7 @@
     "animation.paleo_compsognathus.attack": {
       "loop": false,
       "animation_length": 0.8,
-      "blend_out_time": 0.15,
+      "override_previous_animation": true,
       "bones": {
         "head": {
           "rotation": {

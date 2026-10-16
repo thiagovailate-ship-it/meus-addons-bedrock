@@ -69,6 +69,24 @@ const flush = async (turns = 12) => {
   }
 };
 const translateOf = (raw) => (raw && typeof raw === "object" ? raw.translate : raw);
+/**
+ * Le os argumentos de um RawMessage.  A API oficial declara
+ * `with?: string[] | RawMessage`, e core/text.js normaliza tudo para a forma
+ * `{ rawtext: [...] }` (misturar traducao com numero num array simples faz o
+ * cliente falhar com "Native variant type conversion failed").  As assercoes
+ * leem por aqui para funcionarem nas duas formas oficiais.
+ */
+const withParts = (raw) => {
+  if (!raw || typeof raw !== "object" || raw.with === undefined) return [];
+  if (Array.isArray(raw.with)) {
+    return raw.with.map((v) => (typeof v === "string" ? { text: v } : v));
+  }
+  return raw.with.rawtext || [];
+};
+const partText = (raw, i) => {
+  const part = withParts(raw)[i];
+  return part === undefined ? undefined : part.text;
+};
 /** Interactions are rate limited per player, so space harness actions out. */
 const useItem = (player, typeId) => {
   advanceTicks(10);
@@ -98,8 +116,17 @@ await import(join(SCRIPTS, "main.js"));
 world.afterEvents.worldLoad.fire({});
 const alice = world.addPlayer("Alice", { x: 0, y: 60, z: 0 });
 const bob = world.addPlayer("Bob", { x: 4, y: 60, z: 4 });
-world.afterEvents.playerJoin.fire({ player: alice });
-world.afterEvents.playerJoin.fire({ player: bob });
+// Forma REAL do evento (@minecraft/server 2.10.0): PlayerJoinAfterEvent expoe
+// apenas playerId e playerName - NAO existe event.player.  O mock rejeita
+// qualquer propriedade fora dessa lista, entao um harness que invente a forma
+// do evento quebra aqui em vez de passar verde e falhar no cliente.
+// (`join` ja e o import de node:path, dai fireJoin)
+const fireJoin = (player) => {
+  world.afterEvents.playerJoin.fire({ playerId: player.id, playerName: player.name });
+  advanceTicks(1); // main.js usa system.run(), que so executa no tick seguinte
+};
+fireJoin(alice);
+fireJoin(bob);
 await flush();
 
 const store = await import(join(SCRIPTS, "core", "store.js"));
@@ -114,8 +141,8 @@ useItem(alice, "paleo:fossil_scanner");
 await flush();
 let bar = alice.onScreenDisplay.actionBar.at(-1);
 check("scanner reports a deposit", translateOf(bar) === "paleo.ui.scan.found", JSON.stringify(bar));
-check("scanner distance is real", bar && bar.with && bar.with[1] === 11, JSON.stringify(bar && bar.with));
-check("scanner bearing east", bar && bar.with && bar.with[2].translate === "paleo.ui.scan.dir.e");
+check("scanner distance is real", Number(partText(bar, 1)) === 11, JSON.stringify(withParts(bar)));
+check("scanner bearing east", withParts(bar)[2]?.translate === "paleo.ui.scan.dir.e");
 advanceTicks(10);
 useItem(alice, "paleo:fossil_scanner");
 await flush();
@@ -272,6 +299,51 @@ console.warn = (line) => {
 system.afterEvents.scriptEventReceive.fire({ id: "paleo:dump", initiator: alice });
 console.warn = originalWarn;
 check("diagnostic dump hook responds", dumped);
+
+// ---------------------------------------------------------------------------
+// Guardas de fidelidade do mock.  Estas assercoes sao NEGATIVAS: elas provam
+// que o harness reprova as duas formas de erro que passaram verde na primeira
+// versao e so apareceram no cliente (log real de iOS, Bedrock 1.26.52):
+//   1. playerJoin com `event.player` (a API so expoe playerId/playerName)
+//      -> "cannot read property 'id' of undefined"
+//   2. RawMessage com `with: [{translate}, numero]` (a API declara
+//      string[] | RawMessage) -> "Native variant type conversion failed"
+// Se um dia o mock afrouxar, estas linhas falham.
+// ---------------------------------------------------------------------------
+console.log("\n[11] mock fidelity guards");
+const throwsWith = (fn, needle) => {
+  try {
+    fn();
+    return false;
+  } catch (err) {
+    return String(err.message).includes(needle);
+  }
+};
+check(
+  "mock rejeita playerJoin com event.player (forma que nao existe na API)",
+  throwsWith(
+    () => world.afterEvents.playerJoin.fire({ player: alice }),
+    "NAO existe na API oficial",
+  ),
+);
+check(
+  "mock rejeita RawMessage com array misto em 'with'",
+  throwsWith(
+    () => alice.sendMessage({ translate: "paleo.ui.welcome", with: [{ translate: "x" }, 3] }),
+    "Native variant type conversion failed",
+  ),
+);
+check(
+  "mock aceita a forma normalizada por core/text.js",
+  (() => {
+    try {
+      alice.sendMessage({ translate: "paleo.ui.welcome", with: { rawtext: [{ translate: "x" }, { text: "3" }] } });
+      return true;
+    } catch (err) {
+      return false;
+    }
+  })(),
+);
 
 console.log(`\n[simulate] ${passed} assertions passed, ${failures.length} failed`);
 if (failures.length) {

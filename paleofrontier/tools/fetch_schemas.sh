@@ -13,5 +13,15 @@ cd "$TMP/bedrock-schemas"
 git sparse-checkout set schemas
 mkdir -p "$DIR/.schemas"
 cp -r schemas "$DIR/.schemas/schemas"
-rm -rf "$TMP"
 echo "schemas vendored at $DIR/.schemas/schemas"
+
+# Forms oficiais dos componentes de entidade (MicrosoftDocs/minecraft-creator):
+# alimentam tools/check_entity_fields.py com a lista de campos de cada
+# componente.  Sem eles a checagem roda só na camada version-gated.
+cd "$TMP"
+git clone --depth 1 --filter=blob:none --sparse https://github.com/MicrosoftDocs/minecraft-creator.git "$TMP/minecraft-creator"
+cd "$TMP/minecraft-creator"
+git sparse-checkout set content/forms/entity
+python3 "$DIR/vendor_forms.py" "$TMP/minecraft-creator" || echo "WARN: forms de entidade nao vendorados"
+
+rm -rf "$TMP"

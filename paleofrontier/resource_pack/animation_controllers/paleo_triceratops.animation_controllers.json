@@ -5,6 +5,7 @@
       "initial_state": "calm",
       "states": {
         "calm": {
+          "blend_transition": 0.2,
           "animations": [
             {
               "idle": "query.modified_move_speed <= 0.05"
@@ -27,6 +28,7 @@
           ]
         },
         "aggressive": {
+          "blend_transition": 0.2,
           "animations": [
             {
               "idle": "query.modified_move_speed <= 0.05"
@@ -49,6 +51,7 @@
           ]
         },
         "sleeping": {
+          "blend_transition": 0.3,
           "animations": [
             "rest"
           ],

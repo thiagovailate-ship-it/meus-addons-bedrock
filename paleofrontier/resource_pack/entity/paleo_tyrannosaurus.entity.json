@@ -23,19 +23,18 @@
         "attack": "animation.paleo_tyrannosaurus.attack",
         "eat": "animation.paleo_tyrannosaurus.eat",
         "rest": "animation.paleo_tyrannosaurus.rest",
-        "roar": "animation.paleo_tyrannosaurus.roar"
+        "roar": "animation.paleo_tyrannosaurus.roar",
+        "paleo_move": "controller.animation.paleo_tyrannosaurus"
       },
       "scripts": {
         "pre_animation": [
           "variable.paleo_speed = query.modified_move_speed;"
         ],
+        "animate": [
+          "paleo_move"
+        ],
         "scale": "1.0"
       },
-      "animation_controllers": [
-        {
-          "paleo_move": "controller.animation.paleo_tyrannosaurus"
-        }
-      ],
       "render_controllers": [
         "controller.render.paleo_tyrannosaurus"
       ],

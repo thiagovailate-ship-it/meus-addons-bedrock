@@ -14,6 +14,7 @@ import * as journal from "../systems/journal.js";
 import * as journalUi from "./journal_ui.js";
 import * as ui from "./forms.js";
 import * as log from "../core/log.js";
+import { args } from "../core/text.js";
 
 const BACK = -1;
 
@@ -76,7 +77,7 @@ async function examineMenu(player) {
     const identified = lab.isIdentified(species.key);
     form.button({
       translate: identified ? "paleo.ui.lab.examine_again" : "paleo.ui.lab.examine_one",
-      with: [{ translate: `entity.paleo:${species.entity}.name` }, entry.n],
+      with: args([{ translate: `entity.paleo:${species.entity}.name` }, entry.n]),
     });
     handlers.push(() => {
       lab.identify(player, species.key);
@@ -96,7 +97,7 @@ async function processMenu(player) {
     const missing = lab.missing(player, recipe.inputs);
     form.button({
       translate: missing.length === 0 ? "paleo.ui.lab.process_ok" : "paleo.ui.lab.process_lack",
-      with: [{ translate: `paleo.proc.${recipe.id}` }],
+      with: args([{ translate: `paleo.proc.${recipe.id}` }]),
     });
     form.label(recipe.descPt);
     handlers.push(() => {
@@ -123,7 +124,7 @@ async function reconstructMenu(player) {
     const missing = lab.missing(player, costs);
     form.button({
       translate: missing.length === 0 ? "paleo.ui.lab.reconstruct_ok" : "paleo.ui.lab.reconstruct_lack",
-      with: [{ translate: `entity.paleo:${species.entity}.name` }],
+      with: args([{ translate: `entity.paleo:${species.entity}.name` }]),
     });
     handlers.push(() => {
       lab.reconstruct(player, key);
@@ -143,7 +144,7 @@ async function projectsMenu(player) {
     const identified = lab.isIdentified(species.key);
     form.label({
       translate: identified ? "paleo.ui.lab.project_open" : "paleo.ui.lab.project_locked",
-      with: [{ translate: `entity.paleo:${species.entity}.name` }, { translate: `paleo.rarity.${species.rarityEn}` }],
+      with: args([{ translate: `entity.paleo:${species.entity}.name` }, { translate: `paleo.rarity.${species.rarityEn}` }]),
     });
     const costs = lab.reconstructCosts(species.key);
     const owned = costs

@@ -5,7 +5,7 @@
       "identifier": "paleo:brush"
     },
     "tags": [
-      "paleo_field_gear"
+      "crafting_table"
     ],
     "pattern": [
       "  F",
@@ -22,6 +22,9 @@
       "S": {
         "item": "minecraft:stick"
       }
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     },
     "result": {
       "item": "paleo:brush",

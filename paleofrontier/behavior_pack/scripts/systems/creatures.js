@@ -17,6 +17,7 @@ import {
 } from "../data/content.js";
 import * as store from "../core/store.js";
 import * as log from "../core/log.js";
+import { args } from "../core/text.js";
 
 export function isOurs(typeId) {
   return SPECIES_BY_ENTITY[typeId] !== undefined;
@@ -52,7 +53,7 @@ export function onTamed(event) {
       store.bumpJournal(player, "bonded", species.key, 1);
       player.onScreenDisplay.setTitle({
         translate: "paleo.ui.creatures.bonded",
-        with: [{ translate: `entity.paleo:${species.entity}.name` }],
+        with: args([{ translate: `entity.paleo:${species.entity}.name` }]),
       });
       player.playSound(SOUNDS.discover);
     }
@@ -96,7 +97,7 @@ export function study(player, creature) {
   player.playSound(SOUNDS.labIdentify);
   player.onScreenDisplay.setActionBar({
     translate: "paleo.ui.study.done",
-    with: [{ translate: `entity.paleo:${species.entity}.name` }],
+    with: args([{ translate: `entity.paleo:${species.entity}.name` }]),
   });
   return true;
 }

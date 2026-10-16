@@ -5,7 +5,7 @@
       "identifier": "paleo:incubator"
     },
     "tags": [
-      "paleo_station"
+      "crafting_table"
     ],
     "pattern": [
       "IGI",
@@ -25,6 +25,9 @@
       "N": {
         "item": "paleo:nutrient_gel"
       }
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     },
     "result": {
       "item": "paleo:incubator",

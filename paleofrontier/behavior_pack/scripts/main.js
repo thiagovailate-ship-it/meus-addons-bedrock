@@ -95,14 +95,27 @@ system.runTimeout(() => bootstrap(), 240);
 
 world.afterEvents.playerJoin.subscribe((event) => {
   log.guard("join", () => {
-    const player = event.player;
+    // PlayerJoinAfterEvent expoe apenas playerId e playerName na API estavel
+    // (@minecraft/server 2.10.0): NAO existe event.player.  Ler event.player
+    // devolve undefined e estoura com "cannot read property 'id' of undefined"
+    // dentro de store.journalFor().  O objeto Player so existe depois, obtido
+    // por world.getEntity(playerId) num tick seguinte.
+    const playerId = event.playerId;
     store.loadWorld();
-    const journal = store.journalFor(player);
-    if (!journal.welcomed) {
-      journal.welcomed = true;
-      store.markDirty("journals");
-      player.sendMessage({ translate: "paleo.ui.welcome" });
-    }
+    system.run(() => {
+      log.guard("join.welcome", () => {
+        const player = world.getEntity(playerId);
+        if (!player) {
+          return;
+        }
+        const journal = store.journalFor(player);
+        if (!journal.welcomed) {
+          journal.welcomed = true;
+          store.markDirty("journals");
+          player.sendMessage({ translate: "paleo.ui.welcome" });
+        }
+      });
+    });
   });
 });
 

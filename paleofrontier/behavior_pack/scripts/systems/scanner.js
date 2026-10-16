@@ -21,6 +21,7 @@ import {
 import * as inv from "../core/inventory.js";
 import * as store from "../core/store.js";
 import * as log from "../core/log.js";
+import { args } from "../core/text.js";
 
 export const COOLDOWN_CATEGORY = "paleo_scanner";
 const COOLDOWN_TICKS = 160; // 8 seconds
@@ -123,7 +124,7 @@ export function scan(player) {
   player.playSound(strength >= 4 ? SOUNDS.scanStrong : SOUNDS.scanPing);
   player.onScreenDisplay.setActionBar({
     translate: "paleo.ui.scan.found",
-    with: [{ translate: depositNameKey }, distance, { translate: dirKey }, strength],
+    with: args([{ translate: depositNameKey }, distance, { translate: dirKey }, strength]),
   });
   log.guard("scanner.pulse", () => {
     dim.spawnParticle(PARTICLES.scanPulse, {

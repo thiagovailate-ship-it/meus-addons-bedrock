@@ -17,6 +17,7 @@ import {
 import * as inv from "../core/inventory.js";
 import * as store from "../core/store.js";
 import * as log from "../core/log.js";
+import { args } from "../core/text.js";
 
 function examineCosts(key) {
   const sp = SPECIES_BY_KEY[key];
@@ -84,7 +85,7 @@ export function identify(player, key) {
   if (isIdentified(key)) {
     player.onScreenDisplay.setActionBar({
       translate: "paleo.ui.lab.identified",
-      with: [{ translate: `entity.paleo:${species.entity}.name` }],
+      with: args([{ translate: `entity.paleo:${species.entity}.name` }]),
     });
     return false;
   }
@@ -104,7 +105,7 @@ export function identify(player, key) {
   celebrate(player, SOUNDS.labIdentify);
   player.onScreenDisplay.setTitle({
     translate: "paleo.ui.lab.identified",
-    with: [{ translate: `entity.paleo:${species.entity}.name` }],
+    with: args([{ translate: `entity.paleo:${species.entity}.name` }]),
   });
   return true;
 }
@@ -149,7 +150,7 @@ export function reconstruct(player, key) {
   player.onScreenDisplay.setTitle({ translate: "paleo.ui.lab.egg_ready" });
   player.onScreenDisplay.updateSubtitle({
     translate: "paleo.ui.lab.egg_ready.sub",
-    with: [{ translate: `entity.paleo:${species.entity}.name` }],
+    with: args([{ translate: `entity.paleo:${species.entity}.name` }]),
   });
   store.bumpJournal(player, "found", `${key}.eggs`, 1);
   return true;

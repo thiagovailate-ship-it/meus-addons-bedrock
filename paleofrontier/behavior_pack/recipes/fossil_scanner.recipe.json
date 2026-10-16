@@ -5,7 +5,7 @@
       "identifier": "paleo:fossil_scanner"
     },
     "tags": [
-      "paleo_field_gear"
+      "crafting_table"
     ],
     "pattern": [
       "IGI",
@@ -31,6 +31,9 @@
       "F": {
         "item": "paleo:fossil_chip"
       }
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     },
     "result": {
       "item": "paleo:fossil_scanner",

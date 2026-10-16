@@ -8,6 +8,7 @@ import * as incubator from "../systems/incubator.js";
 import * as inv from "../core/inventory.js";
 import * as store from "../core/store.js";
 import * as ui from "./forms.js";
+import { args } from "../core/text.js";
 
 const BACK = -1;
 
@@ -45,7 +46,7 @@ async function inner(player, block) {
       const species = SPECIES_BY_EGG[egg.id];
       form.button({
         translate: "paleo.ui.incubator.insert_one",
-        with: [{ translate: `entity.paleo:${species.entity}.name` }, egg.n],
+        with: args([{ translate: `entity.paleo:${species.entity}.name` }, egg.n]),
       });
       handlers.push(() => {
         if (incubator.start(player, block, egg.id)) {
@@ -61,7 +62,7 @@ async function inner(player, block) {
       translate: percent >= 100
         ? "paleo.ui.incubator.ready"
         : "paleo.ui.incubator.status",
-      with: [{ translate: `entity.paleo:${species.entity}.name` }, percent, stage],
+      with: args([{ translate: `entity.paleo:${species.entity}.name` }, percent, stage]),
     });
     form.label({
       translate: incubator.heatMultiplier(block) > 1
@@ -92,10 +93,10 @@ async function statusMenu(player, block, entry) {
   const percent = incubator.progressPercent(entry);
   const form = new ActionFormData()
     .title({ translate: "paleo.ui.incubator.title" });
-  form.label({ translate: "paleo.ui.incubator.s_species", with: [{ translate: `entity.paleo:${species.entity}.name` }] });
-  form.label({ translate: "paleo.ui.incubator.s_progress", with: [percent] });
-  form.label({ translate: "paleo.ui.incubator.s_elapsed", with: [Math.round(entry.progressMs / 1000), species.incubationSeconds] });
-  form.label({ translate: "paleo.ui.incubator.s_heat", with: [Math.round((incubator.heatMultiplier(block) - 1) * 100)] });
+  form.label({ translate: "paleo.ui.incubator.s_species", with: args([{ translate: `entity.paleo:${species.entity}.name` }])});
+  form.label({ translate: "paleo.ui.incubator.s_progress", with: args([percent])});
+  form.label({ translate: "paleo.ui.incubator.s_elapsed", with: args([Math.round(entry.progressMs / 1000), species.incubationSeconds])});
+  form.label({ translate: "paleo.ui.incubator.s_heat", with: args([Math.round((incubator.heatMultiplier(block) - 1) * 100)])});
   form.label({ translate: "paleo.ui.incubator.tip" });
   form.button({ translate: "paleo.ui.lab.cancel" });
   await showMenu(player, form, [null]);

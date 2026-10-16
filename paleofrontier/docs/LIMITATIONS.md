@@ -1,16 +1,43 @@
 # PALEOFRONTIER — limitações conhecidas
 
-## 1. Não verificado em cliente (ambiente sem Minecraft executável)
+## 1. Verificação em cliente
+
+### O que já se sabe do cliente real
+
+Uma rodada real aconteceu (Bedrock 1.26.52, iOS) e produziu log. Os 9 erros
+reportados foram corrigidos e cada um virou uma checagem permanente — o detalhe
+está em `docs/TEST_REPORT.md`, Camada 0.
+
+O log também **provou** algumas coisas que antes eram só inferência:
+
+- os dois pacotes foram importados e ativados pelo jogo (o log cita
+  `behavior_packs/Paleo-BP` e `resource_packs/Paleo-RP` no mundo);
+- as definições de bloco, item, entidade, receita, som, animação e client entity
+  são todas lidas e validadas pelo cliente na carga do mundo — e é assim que
+  sabemos exatamente quais campos ele rejeita;
+- os scripts carregaram e executaram (o log mostra os handlers rodando e o
+  próprio sistema de diagnóstico `[paleo:error]` funcionando como projetado:
+  capturou, rotulou e reportou as falhas em vez de travar o mundo).
+
+### O que ainda NÃO foi re-verificado no cliente
+
+**As correções desta rodada ainda não foram re-testadas em cliente.** O que
+existe é: evidência do log anterior, confronto com o conteúdo vanilla 1.26.50.4,
+com a documentação oficial e com as type definitions — mais as checagens
+permanentes. Um segundo log é o que fecha o ciclo.
 
 | Item | Por que não foi testado | Mitigação aplicada |
 |---|---|---|
+| Ausência de erros no log após as correções | exige nova rodada no cliente | 1023 verificações + 42 asserções; regras calibradas contra as 128 entidades vanilla para não haver falso negativo/positivo |
 | Renderização final de modelos/texturas/partículas | exige o cliente | geometria conferida contra o formato oficial e renderizada offline por `tools/preview_model.py`; UVs gerados por packer sem sobreposição |
 | Distribuição real dos depósitos em seeds | geração ocorre no motor, em mundo novo | feature rules no formato oficial (`ore_feature` + `feature_rules`), mesmos padrões dos samples da Mojang (`custom_features/basic_orange_ore`, `casual_creator/gray_wave`) |
-| UX dos formulários em touch | exige dispositivo | apenas `ActionFormData` (title/body/label/button), sem UI JSON customizada, sem comandos |
-| Reprodução dos 45 `.ogg` | exige o motor de áudio | arquivos gerados com libsndfile (Vorbis), categorias do enum oficial, durações curtas |
-| "Feel" da IA (prioridades/intervalos) | exige observação em jogo | comportamentos 100% nativos copiados de padrões vanilla validados (wolf/hoglin/ravager/fox/goat), com cooldowns de ataque e desistência explícitos |
+| Receitas aparecendo na bancada | exige o cliente | tags trocadas de customizadas (`paleo_field_gear`) para as oficiais (`crafting_table`) + `unlock`; checagem permanente contra as 11 tags oficiais |
+| UX dos formulários em touch | exige dispositivo | apenas `ActionFormData` (title/body/label/button), sem UI JSON customizada, sem comandos; `RawMessage` normalizado por `core/text.js` |
+| Reprodução dos 45 `.ogg` | exige o motor de áudio | arquivos gerados com libsndfile (Vorbis), categorias do enum oficial, durações curtas; eventos de som conferidos contra os 44 de bloco e 166 de entidade do `sounds.json` vanilla |
+| "Feel" da IA (prioridades/intervalos) | exige observação em jogo | comportamentos 100% nativos copiados de padrões vanilla validados (wolf/hoglin/ravager/fox/goat), com cooldowns de ataque e desistência explícitos; campos float-range no formato `{min,max}` exigido desde 1.26.0 |
 | Desempenho em mobile real | exige device | zero trabalho por tick (2 intervalos: 200t e 40t); scanner com 1 consulta e cooldown; partículas limitadas |
 | Servidor dedicado/realm com muitos jogadores | exige infraestrutura | lógica host-autoritativa; o simulador cobre 2 jogadores e dupla interação |
+
 
 ## 2. Decisões de design com impacto percebido
 

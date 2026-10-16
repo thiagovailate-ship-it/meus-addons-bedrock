@@ -5,7 +5,7 @@
       "identifier": "paleo:field_case"
     },
     "tags": [
-      "paleo_field_gear"
+      "crafting_table"
     ],
     "pattern": [
       "LPL",
@@ -22,6 +22,9 @@
       "C": {
         "item": "paleo:fossil_chip"
       }
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     },
     "result": {
       "item": "paleo:field_case",

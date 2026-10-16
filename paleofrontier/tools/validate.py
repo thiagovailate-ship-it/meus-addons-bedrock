@@ -21,6 +21,9 @@ import re
 import subprocess
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import bedrock_names as bn  # noqa: E402
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 BP = os.path.join(ROOT, "behavior_pack")
@@ -58,6 +61,51 @@ def walk(root, exts=None):
 
 def rel(path):
     return os.path.relpath(path, ROOT)
+
+
+def strip_js_comments(text):
+    """Remove comentarios // e /* */ de um fonte JS preservando strings.
+
+    Necessario porque varios checks leem o fonte dos scripts por regex: sem
+    isso, exemplos dentro de comentarios (core/text.js documenta as formas
+    INVALIDAS de RawMessage) viram falsos positivos - chave de lang inexistente
+    e "handler de playerJoin lendo event.player".
+    """
+    out = []
+    i = 0
+    n = len(text)
+    quote = None
+    while i < n:
+        ch = text[i]
+        if quote:
+            out.append(ch)
+            if ch == "\\":
+                if i + 1 < n:
+                    out.append(text[i + 1])
+                i += 2
+                continue
+            if ch == quote:
+                quote = None
+            i += 1
+            continue
+        if ch in "\"'`":
+            quote = ch
+            out.append(ch)
+            i += 1
+            continue
+        if ch == "/" and i + 1 < n and text[i + 1] == "/":
+            while i < n and text[i] != "\n":
+                i += 1
+            continue
+        if ch == "/" and i + 1 < n and text[i + 1] == "*":
+            i += 2
+            while i + 1 < n and not (text[i] == "*" and text[i + 1] == "/"):
+                i += 1
+            i = min(n, i + 2)
+            continue
+        out.append(ch)
+        i += 1
+    return "".join(out)
 
 
 # ---------------------------------------------------------------------------
@@ -346,7 +394,10 @@ def check_client(entities):
             for entry in load(geo_path)["minecraft:geometry"]:
                 geos.add(entry["description"]["identifier"])
         for short, target in client.get("animations", {}).items():
-            if target not in anims:
+            # `animations` pode apontar para uma animacao OU para um animation
+            # controller (padrao do armor_stand vanilla, que e o que usamos para
+            # nao emitir a chave `animation_controllers`).
+            if target not in anims and target not in ctrls:
                 fail(f"{ident}: client animation {target} not defined")
             ok()
         for entry in client.get("animation_controllers", []):
@@ -448,7 +499,7 @@ def check_lang():
     used = set()
     for path in walk(os.path.join(BP, "scripts"), [".js"]):
         with open(path, encoding="utf-8") as fh:
-            text = fh.read()
+            text = strip_js_comments(fh.read())
         for match in re.finditer(r'translate:\s*"([^"]+)"', text):
             used.add(match.group(1))
         for match in re.finditer(r'`translate:\s*"([^"$]+)"', text):
@@ -518,6 +569,200 @@ def check_scripts():
     ok()
 
 
+def check_bedrock_vocabulary():
+    """Camada 4: vocabulario oficial do cliente.
+
+    Cada checagem aqui nasceu de um erro REAL observado no cliente
+    (Bedrock 1.26.52, iOS) que as camadas 1-3 deixavam passar:
+
+      [Blocks] description -> menu_category -> group: string must be prefixed
+               with a namespace                                   (3 blocos)
+      [Item]   components -> minecraft:fire_resistant: expected an object
+                                                                  (4 ovos)
+      [Recipes] 1.20+ Recipes require unlock data                 (6 receitas)
+      [Sound]  Event name 'power_on' is not a valid LevelSoundEvent (9 eventos)
+      [Animation] blend_out_time | child not valid here           (4 animacoes)
+      [Animation] animation_controllers | child not valid here    (4 client ent.)
+      [Actor]  minecraft:pushable: not present in the Schema      (4 entidades)
+
+    Os vocabularios vem de tools/bedrock_names.py, derivados dos samples
+    vanilla 1.26.50.4 e da documentacao oficial.
+    """
+    # --- menu_category de blocos e itens ------------------------------------
+    for kind, root, key in (
+        ("block", os.path.join(BP, "blocks"), "minecraft:block"),
+        ("item", os.path.join(BP, "items"), "minecraft:item"),
+    ):
+        for path in walk(root, [".json"]):
+            doc = load(path)
+            menu = (doc.get(key, {}).get("description") or {}).get("menu_category")
+            if menu is None:
+                ok()
+                continue
+            category = menu.get("category")
+            if category is not None and category not in bn.MENU_CATEGORIES:
+                fail(f"{rel(path)}: menu_category.category '{category}' fora do enum oficial "
+                     f"{sorted(bn.MENU_CATEGORIES)}")
+            ok()
+            group = menu.get("group")
+            if group is not None:
+                # Desde 1.26.20 a validacao e estrita: group precisa de namespace.
+                if ":" not in group:
+                    fail(f"{rel(path)}: menu_category.group '{group}' precisa de namespace "
+                         f"(ex.: 'minecraft:{group}') - sem isso o {kind} inteiro nao carrega")
+                elif group not in bn.ITEM_GROUPS:
+                    fail(f"{rel(path)}: menu_category.group '{group}' nao e um grupo vanilla conhecido")
+                ok()
+
+    # --- forma dos componentes de item (objeto vs escalar) -------------------
+    for path in walk(os.path.join(BP, "items"), [".json"]):
+        doc = load(path)
+        comps = (doc.get("minecraft:item") or {}).get("components") or {}
+        for comp, allowed_fields in bn.OBJECT_ONLY_ITEM_COMPONENTS.items():
+            if comp not in comps:
+                continue
+            value = comps[comp]
+            if not isinstance(value, dict):
+                fail(f"{rel(path)}: '{comp}' precisa ser um objeto (ex.: {{\"value\": true}}); "
+                     f"o cliente rejeita {json.dumps(value)} com 'expected an object' e o item "
+                     f"perde o icone")
+            else:
+                unknown = set(value) - set(allowed_fields)
+                if unknown:
+                    fail(f"{rel(path)}: '{comp}' tem campo(s) desconhecido(s) {sorted(unknown)}; "
+                         f"oficiais: {list(allowed_fields)}")
+            ok()
+
+    # --- receitas: tag de menu oficial + unlock obrigatoria ------------------
+    for path in walk(os.path.join(BP, "recipes"), [".json"]):
+        doc = load(path)
+        for recipe_key, body in doc.items():
+            if not recipe_key.startswith("minecraft:recipe") or not isinstance(body, dict):
+                continue
+            tags = body.get("tags") or []
+            for tag in tags:
+                if tag not in bn.RECIPE_MENU_TAGS:
+                    fail(f"{rel(path)}: tag de receita '{tag}' nao e um menu oficial "
+                         f"{sorted(bn.RECIPE_MENU_TAGS)} - a receita nao aparece em nenhuma "
+                         f"bancada e a progressao fica inalcançavel")
+            ok()
+            if "unlock" not in body:
+                fail(f"{rel(path)}: receitas 1.20+ exigem 'unlock' "
+                     f"(ex.: {{\"context\": \"AlwaysUnlocked\"}})")
+            ok()
+
+    # --- sounds.json: nomes de evento LevelSoundEvent ------------------------
+    sounds = load(os.path.join(RP, "sounds.json"))
+    for group, spec in sounds.get("block_sounds", {}).items():
+        for event_name in spec.get("events", {}):
+            if event_name not in bn.BLOCK_SOUND_EVENTS:
+                fail(f"sounds.json: block_sounds.{group} evento '{event_name}' nao e um "
+                     f"LevelSoundEvent valido (use notacao com ponto, ex. 'item.use.on')")
+            ok()
+    for entity, spec in sounds.get("entity_sounds", {}).get("entities", {}).items():
+        for event_name in spec.get("events", {}):
+            if event_name not in bn.ENTITY_SOUND_EVENTS:
+                fail(f"sounds.json: entity_sounds.{entity} evento '{event_name}' nao e um "
+                     f"LevelSoundEvent valido (use notacao com ponto, ex. 'attack.strong')")
+            ok()
+
+    # --- animacoes: chaves do formato oficial --------------------------------
+    for path in walk(os.path.join(RP, "animations"), [".json"]):
+        doc = load(path)
+        for name, body in doc.get("animations", {}).items():
+            if not isinstance(body, dict):
+                continue
+            for field in body:
+                if field not in bn.ANIMATION_KEYS:
+                    fail(f"{rel(path)}: animacao '{name}' tem a chave '{field}', que nao "
+                         f"existe no formato oficial {sorted(bn.ANIMATION_KEYS)} "
+                         f"(blending pertence ao animation controller, via blend_transition)")
+                ok()
+
+    # --- client entities: chaves de description ------------------------------
+    for path in walk(os.path.join(RP, "entity"), [".json"]):
+        doc = load(path)
+        desc = (doc.get("minecraft:client_entity") or {}).get("description") or {}
+        for field in desc:
+            if field not in bn.CLIENT_ENTITY_DESCRIPTION_KEYS:
+                fail(f"{rel(path)}: client_entity.description tem a chave desconhecida '{field}'")
+            ok()
+        # animation_controllers e aceita pelo cliente, mas o parser de animacao
+        # loga "child 'animation_controllers' not valid here" mesmo em arquivos
+        # vanilla (iron_golem).  Usamos animations + scripts.animate, que e o
+        # padrao do armor_stand e nao produz ruido no log.
+        if "animation_controllers" in desc:
+            fail(f"{rel(path)}: use 'animations' + 'scripts.animate' em vez de "
+                 f"'animation_controllers' (evita erro de log reproduzivel ate no vanilla)")
+        else:
+            ok()
+        animate = (desc.get("scripts") or {}).get("animate") or []
+        declared = set(desc.get("animations") or {})
+        for entry in animate:
+            short = list(entry)[0] if isinstance(entry, dict) else entry
+            if short not in declared:
+                fail(f"{rel(path)}: scripts.animate referencia '{short}', que nao esta em animations")
+            ok()
+
+
+def check_script_api_fidelity():
+    """Camada 5: usos da Script API que o mock fiel tambem reproduz.
+
+    - `RawMessage.with` e declarado `string[] | RawMessage`; array misto faz o
+      cliente falhar com "Native variant type conversion failed" e derruba a
+      tela inteira.  Todo `with:` precisa passar por args() de core/text.js.
+    - `PlayerJoinAfterEvent` so expoe playerId/playerName; ler `event.player`
+      devolve undefined e estoura dentro do handler.
+    """
+    scripts_root = os.path.join(BP, "scripts")
+    text_helper = os.path.join(scripts_root, "core", "text.js")
+    if not os.path.isfile(text_helper):
+        fail("scripts/core/text.js ausente: nao ha normalizador de RawMessage")
+        return
+    ok()
+    helper_src = open(text_helper, encoding="utf-8").read()
+    if "export function args(" not in helper_src:
+        fail("core/text.js precisa exportar args()")
+    ok()
+
+    for path in walk(scripts_root, [".js"]):
+        raw = open(path, encoding="utf-8").read()
+        text = strip_js_comments(raw)
+        if os.path.abspath(path) == os.path.abspath(text_helper):
+            continue  # o proprio modulo documenta as formas invalidas
+        for match in re.finditer(r"\bwith:(\s*)", text):
+            rest = text[match.end():match.end() + 6]
+            if not rest.startswith("args("):
+                line = text[:match.start()].count("\n") + 1
+                fail(f"{rel(path)}:{line}: 'with:' sem args() - a API declara "
+                     f"with?: string[] | RawMessage; array misto quebra no cliente")
+            ok()
+        if re.search(r"playerJoin[\s\S]{0,220}?event\.player\b(?!Id)", text):
+            fail(f"{rel(path)}: handler de playerJoin lendo 'event.player' - "
+                 f"PlayerJoinAfterEvent (@minecraft/server 2.10.0) so expoe "
+                 f"playerId/playerName; use world.getEntity(event.playerId)")
+        ok()
+
+
+def run_entity_field_checks():
+    """Camada 6: componentes de entidade (delega a tools/check_entity_fields.py)."""
+    script = os.path.join(HERE, "check_entity_fields.py")
+    if not os.path.isfile(script):
+        warn("check_entity_fields.py ausente; camada de componentes de entidade pulada")
+        return
+    proc = subprocess.run([sys.executable, script], capture_output=True, text=True)
+    for line in (proc.stdout or "").splitlines():
+        if line.startswith("[FAIL]"):
+            fail(f"entity-fields: {line[len('[FAIL]'):].strip()}")
+        elif line.startswith("[warn]"):
+            warn(f"entity-fields: {line[len('[warn]'):].strip()}")
+        elif line.startswith("[entity-fields]"):
+            print(f"  {line}")
+        ok()
+    if proc.returncode != 0 and not any("entity-fields" in f for f in FAILURES):
+        fail(f"check_entity_fields.py saiu com {proc.returncode}: {(proc.stderr or '').strip()[:200]}")
+
+
 def main():
     schemas_dir = os.path.join(HERE, ".schemas", "schemas")
     if "--schemas" in sys.argv:
@@ -538,6 +783,12 @@ def main():
     check_languages_file()
     check_lang()
     check_scripts()
+    print("\n-- camada 4: vocabulario oficial do cliente")
+    check_bedrock_vocabulary()
+    print("-- camada 5: fidelidade da Script API")
+    check_script_api_fidelity()
+    print("-- camada 6: componentes de entidade (version-gated)")
+    run_entity_field_checks()
 
     print()
     print(f"[validate] {CHECKS} checks executed")

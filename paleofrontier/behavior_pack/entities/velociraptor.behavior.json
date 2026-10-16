@@ -83,7 +83,10 @@
           "reselect_targets": true,
           "scan_interval": 12,
           "within_radius": 20,
-          "attack_interval": 12,
+          "attack_interval": {
+            "min": 12,
+            "max": 12
+          },
           "entity_types": [
             {
               "filters": {
@@ -337,10 +340,8 @@
         "max": 40
       },
       "minecraft:physics": {},
-      "minecraft:pushable": {
-        "is_pushable": true,
-        "is_pushable_by_piston": true
-      },
+      "minecraft:pushable_by_entity": {},
+      "minecraft:pushable_by_block": {},
       "minecraft:conditional_bandwidth_optimization": {},
       "minecraft:balloonable": {},
       "minecraft:leashable": {

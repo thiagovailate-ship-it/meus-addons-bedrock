@@ -5,7 +5,7 @@
       "identifier": "paleo:research_bench"
     },
     "tags": [
-      "paleo_station"
+      "crafting_table"
     ],
     "pattern": [
       "GBG",
@@ -31,6 +31,9 @@
       "P": {
         "item": "minecraft:oak_planks"
       }
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     },
     "result": {
       "item": "paleo:research_bench",

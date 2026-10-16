@@ -10,6 +10,7 @@ import { SPECIES, SPECIES_BY_KEY, ITEMS } from "../data/content.js";
 import * as inv from "../core/inventory.js";
 import * as store from "../core/store.js";
 import * as lab from "./lab.js";
+import { args } from "../core/text.js";
 
 function foundCount(player, key) {
   return store.journalFor(player).found[key] || 0;
@@ -70,37 +71,37 @@ export function dossierLines(player, key) {
   const sp = SPECIES_BY_KEY[key];
   const identified = lab.isIdentified(key);
   const lines = [];
-  lines.push({ translate: "paleo.ui.dossier.name", with: [{ translate: `entity.paleo:${sp.entity}.name` }, sp.sci] });
-  lines.push({ translate: "paleo.ui.dossier.status", with: [identified
+  lines.push({ translate: "paleo.ui.dossier.name", with: args([{ translate: `entity.paleo:${sp.entity}.name` }, sp.sci])});
+  lines.push({ translate: "paleo.ui.dossier.status", with: args([identified
     ? { translate: "paleo.ui.journal.identified" }
-    : { translate: "paleo.ui.journal.unknown" }] });
-  lines.push({ translate: "paleo.ui.dossier.rarity", with: [{ translate: `paleo.rarity.${sp.rarityEn}` }] });
+    : { translate: "paleo.ui.journal.unknown" }])});
+  lines.push({ translate: "paleo.ui.dossier.rarity", with: args([{ translate: `paleo.rarity.${sp.rarityEn}` }])});
   if (identified) {
-    lines.push({ translate: "paleo.ui.dossier.era", with: [sp.eraPt] });
-    lines.push({ translate: "paleo.ui.dossier.diet", with: [sp.dietPt] });
-    lines.push({ translate: "paleo.ui.dossier.size", with: [sp.sizePt] });
-    lines.push({ translate: "paleo.ui.dossier.note", with: [sp.notePt] });
-    lines.push({ translate: "paleo.ui.dossier.incubation", with: [Math.round(sp.incubationSeconds / 60)] });
+    lines.push({ translate: "paleo.ui.dossier.era", with: args([sp.eraPt])});
+    lines.push({ translate: "paleo.ui.dossier.diet", with: args([sp.dietPt])});
+    lines.push({ translate: "paleo.ui.dossier.size", with: args([sp.sizePt])});
+    lines.push({ translate: "paleo.ui.dossier.note", with: args([sp.notePt])});
+    lines.push({ translate: "paleo.ui.dossier.incubation", with: args([Math.round(sp.incubationSeconds / 60)])});
     const cost = sp.reconstructCost;
     lines.push({
       translate: "paleo.ui.dossier.cost",
-      with: [cost.matrix, cost.specimen, cost.gel, cost.amber],
+      with: args([cost.matrix, cost.specimen, cost.gel, cost.amber]),
     });
   } else {
     lines.push({ translate: "paleo.ui.dossier.locked" });
     lines.push({
       translate: "paleo.ui.dossier.examine_cost",
-      with: [sp.examineCost.specimen, sp.examineCost.chip, sp.examineCost.shard, sp.examineCost.amber],
+      with: args([sp.examineCost.specimen, sp.examineCost.chip, sp.examineCost.shard, sp.examineCost.amber]),
     });
   }
   lines.push({
     translate: "paleo.ui.dossier.progress",
-    with: [
+    with: args([
       specimenFound(player, key),
       hatchedCount(player, key),
       studiedCount(player, key),
       bondedCount(player, key),
-    ],
+    ]),
   });
   return lines;
 }
@@ -108,9 +109,9 @@ export function dossierLines(player, key) {
 export function statsLines(player) {
   const stats = store.registry().stats;
   return [
-    { translate: "paleo.ui.stats.mined", with: [stats.mined || 0] },
-    { translate: "paleo.ui.stats.identified", with: [lab.identifiedKeys().length, SPECIES.length] },
-    { translate: "paleo.ui.stats.hatched", with: [stats.hatched || 0] },
-    { translate: "paleo.ui.stats.studied", with: [stats.studied || 0] },
+    { translate: "paleo.ui.stats.mined", with: args([stats.mined || 0])},
+    { translate: "paleo.ui.stats.identified", with: args([lab.identifiedKeys().length, SPECIES.length])},
+    { translate: "paleo.ui.stats.hatched", with: args([stats.hatched || 0])},
+    { translate: "paleo.ui.stats.studied", with: args([stats.studied || 0])},
   ];
 }

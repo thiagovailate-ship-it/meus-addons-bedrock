@@ -13,6 +13,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import bedrock_names as bn  # noqa: E402
 import content_model as cm  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -578,7 +579,17 @@ def anim_attack(entity):
             "0.8": [0.0, 0.0, 0.0],
         }
     }
-    return {"loop": False, "animation_length": 0.8, "blend_out_time": 0.15, "bones": bones}
+    # `blend_out_time` NAO existe no formato de animacao do Bedrock: as unicas
+    # chaves validas (derivadas de 700+ animacoes vanilla) sao bones, loop,
+    # animation_length, sound_effects, anim_time_update, particle_effects,
+    # start_delay e override_previous_animation.  Blending pertence ao
+    # animation controller, via blend_transition.
+    return {
+        "loop": False,
+        "animation_length": 0.8,
+        "override_previous_animation": True,
+        "bones": bones,
+    }
 
 
 def anim_eat(entity):
@@ -720,6 +731,7 @@ def build_animation_controller(entity):
                 "initial_state": "calm",
                 "states": {
                     "calm": {
+                        "blend_transition": 0.2,
                         "animations": [
                             {"idle": "query.modified_move_speed <= 0.05"},
                             {"walk": "query.modified_move_speed"},
@@ -732,6 +744,7 @@ def build_animation_controller(entity):
                         ],
                     },
                     "aggressive": {
+                        "blend_transition": 0.2,
                         "animations": [
                             {"idle": "query.modified_move_speed <= 0.05"},
                             {"walk": "query.modified_move_speed"},
@@ -744,6 +757,7 @@ def build_animation_controller(entity):
                         ],
                     },
                     "sleeping": {
+                        "blend_transition": 0.3,
                         "animations": ["rest"],
                         "transitions": [
                             {"calm": "!query.is_sleeping"},
@@ -812,16 +826,19 @@ def build_client_entity(sp):
                     "eat": f"animation.paleo_{entity}.eat",
                     "rest": f"animation.paleo_{entity}.rest",
                     "roar": f"animation.paleo_{entity}.roar",
+                    "paleo_move": f"controller.animation.paleo_{entity}",
                 },
                 "scripts": {
                     "pre_animation": [
                         "variable.paleo_speed = query.modified_move_speed;",
                     ],
+                    # Controller listado em `animations` + `scripts.animate`,
+                    # como faz o armor_stand vanilla (fv 1.10.0).  Evita a chave
+                    # `animation_controllers`, que o parser de animacao loga como
+                    # erro mesmo em definicoes vanilla (iron_golem).
+                    "animate": ["paleo_move"],
                     "scale": "1.0",
                 },
-                "animation_controllers": [
-                    {"paleo_move": f"controller.animation.paleo_{entity}"},
-                ],
                 "render_controllers": [f"controller.render.paleo_{entity}"],
                 "spawn_egg": {
                     "texture": f"paleo_spawn_egg_{entity}",

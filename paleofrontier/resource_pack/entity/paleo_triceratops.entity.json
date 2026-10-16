@@ -23,19 +23,18 @@
         "attack": "animation.paleo_triceratops.attack",
         "eat": "animation.paleo_triceratops.eat",
         "rest": "animation.paleo_triceratops.rest",
-        "roar": "animation.paleo_triceratops.roar"
+        "roar": "animation.paleo_triceratops.roar",
+        "paleo_move": "controller.animation.paleo_triceratops"
       },
       "scripts": {
         "pre_animation": [
           "variable.paleo_speed = query.modified_move_speed;"
         ],
+        "animate": [
+          "paleo_move"
+        ],
         "scale": "1.0"
       },
-      "animation_controllers": [
-        {
-          "paleo_move": "controller.animation.paleo_triceratops"
-        }
-      ],
       "render_controllers": [
         "controller.render.paleo_triceratops"
       ],
